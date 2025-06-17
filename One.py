@@ -251,7 +251,7 @@ if "Gaze palsy (Conjugate, toward lesion)" in symptoms:
     suggest_imaging = True
 elif "Gaze palsy (Conjugate, away from lesion)" in symptoms:
     lesion_locations.add("Contralateral Frontal eye field (Irritative lesion)")
-    lesion_locations.add("Basal Ganglia/Thalamus (less common for conjugate deviation)") # Added this for completeness
+    lesion_locations.add("Basal Ganglia/Thalamus (less common for conjugate deviation)") 
     affected_vessels.add("Contralateral Middle Cerebral Artery (MCA) - Superior Division")
     affected_vessels.add("Lenticulostriate arteries (from MCA) or Thalamoperforating arteries (from PCA)")
     suggest_imaging = True
@@ -263,7 +263,7 @@ elif "Gaze palsy (Internuclear Ophthalmoplegia - INO)" in symptoms:
 
 
 # --- Combine for Vascular Territory Analysis (New Section) ---
-st.header("Affected Vascular Territory Analysis")
+st.header("and affected Vascular Territory")
 vascular_analysis = set() # NEW: Set to store specific vascular syndromes
 
 # Special combined rules for common stroke syndromes
@@ -300,13 +300,13 @@ if vascular_analysis:
         st.markdown(f"- **{vessel}**")
     if affected_vessels: # Also list individual vessel suggestions if specific patterns weren't met
         st.markdown("---")
-        st.info("Additional potentially affected vessels based on individual symptoms:")
+        st.info("Additional potentially affected vessels:")
         for vessel in sorted(list(affected_vessels)):
             if vessel not in vascular_analysis: # Avoid duplicating
                 st.markdown(f"- {vessel}")
 else:
     if affected_vessels: # If no combined pattern, show individual vessel suggestions
-        st.subheader("Potentially Affected Arterial Supply (based on individual symptoms):")
+        st.subheader("Potentially Affected Arterial Supply (based on symptoms):")
         for vessel in sorted(list(affected_vessels)):
             st.markdown(f"- **{vessel}**")
     else:
@@ -314,7 +314,7 @@ else:
 
 # Display Results
 if lesion_locations:
-    st.subheader("Likely Lesion Locations")
+    st.subheader("Considerations")
     for loc in sorted(list(lesion_locations)):
         st.markdown(f"- {loc}")
 
