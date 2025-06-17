@@ -256,7 +256,7 @@ elif "Gaze palsy (Internuclear Ophthalmoplegia - INO)" in symptoms:
 
 
 # --- Combine for Vascular Territory Analysis (New Section) ---
-st.header("Step 4: Affected Vascular Territory Analysis") # Added Step 4
+st.header("Affected Vascular Territory Analysis") # Added Step 4
 vascular_analysis = set()
 
 # Special combined rules for common stroke syndromes
@@ -291,14 +291,14 @@ if vascular_analysis:
     st.subheader("Most Likely Affected Arterial Supply:")
     for vessel in sorted(list(vascular_analysis)):
         st.markdown(f"- **{vessel}**")
-    if affected_vessels: # Also list individual vessel suggestions if specific patterns weren't met
+    if affected_vessels:
         st.markdown("---")
         st.info("Additional potentially affected vessels based on individual symptoms:")
         for vessel in sorted(list(affected_vessels)):
-            if vessel not in vascular_analysis: # Avoid duplicating
+            if vessel not in vascular_analysis:
                 st.markdown(f"- {vessel}")
 else:
-    if affected_vessels: # If no combined pattern, show individual vessel suggestions
+    if affected_vessels:
         st.subheader("Potentially Affected Arterial Supply (based on individual symptoms):")
         for vessel in sorted(list(affected_vessels)):
             st.markdown(f"- **{vessel}**")
