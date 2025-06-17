@@ -289,7 +289,7 @@ elif "Left hemiparesis (Upper & Lower equally)" in symptoms and "Facial palsy (L
 
 if lesion_locations:
     # 1. Display Likely Lesion Locations
-    st.header("Likely Lesion Locations")
+    st.header("Considerations")
     for loc in sorted(list(lesion_locations)):
         st.markdown(f"- {loc}")
 
@@ -299,7 +299,7 @@ if lesion_locations:
             st.info(f"- {note}")
 
     # 2. Display Affected Vascular Territory Analysis
-    st.header("Affected Vascular Territory Analysis")
+    st.header("Affected Vascular Territory")
     if vascular_analysis:
         st.subheader("Most Likely Affected Arterial Supply:")
         for vessel in sorted(list(vascular_analysis)):
@@ -312,7 +312,7 @@ if lesion_locations:
                     st.markdown(f"- {vessel}")
     else:
         if affected_vessels:
-            st.subheader("Potentially Affected Arterial Supply (based on individual symptoms):")
+            st.subheader("Potentially Affected Arterial Supply (based on symptoms):")
             for vessel in sorted(list(affected_vessels)):
                 st.markdown(f"- **{vessel}**")
         else:
