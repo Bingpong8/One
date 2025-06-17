@@ -2,11 +2,11 @@ import streamlit as st
 
 st.set_page_config(page_title="One", layout="centered", initial_sidebar_state="expanded")
 
-st.title("Neurological Lesion Localizer & NIHSS Calculator")
+st.title("Weird Localizer & N Calculator")
 
 # --- Chief Complaint Text Input ---
 st.header("Chief Complaint")
-chief_complaint = st.text_input("Chief Complaint (e.g., 'weakness', 'dysarthria', 'numbness')", "").strip()
+chief_complaint = st.text_input("e.g., 'weakness', 'dysarthria', 'numbness'", "").strip()
 
 # Symptom checklist
 st.header("Symptoms")
