@@ -32,7 +32,7 @@ symptoms = st.multiselect("Choose symptom(s):", [
     "Ataxia (Limb)",
     "Ataxia (Truncal)",
     "Sensory loss (Hemibody, all modalities)",
-    "Sensory loss (Dissociated - e.g., pain/temp affected, light touch spared)", # Brainstem/spinal cord
+    "Sensory loss (Dissociated - e.g. pain/temp affected, light touch spared)", # Brainstem/spinal cord
     "Tongue deviation",
     "Horner’s syndrome",
     "Gaze palsy (Conjugate, toward lesion)",
@@ -64,21 +64,23 @@ vascular_analysis = set()
 if "Right hemiparesis (Upper & Lower equally)" in symptoms:
     lesion_locations.add("Left internal capsule (Subcortical)")
     lesion_locations.add("Left Thalamus (if sensory also affected)")
-    affected_vessels.add("Left Lenticulostriate arteries (MCA deep branches) or Thalamoperforating arteries (PCA deep branches)")
+    affected_vessels.add("Left Lenticulostriate arteries (MCA deep branches)")
+    affected_vessels.add("Thalamoperforating arteries (PCA deep branches)")
     suggest_imaging = True
 elif "Right hemiparesis (Upper> Lower)" in symptoms:
     lesion_locations.add("Left motor cortex")
     affected_vessels.add("Left Middle Cerebral Artery (MCA) - Superior Division")
     suggest_imaging = True
 elif "Right hemiparesis (Lower> Upper)" in symptoms:
-    lesion_locations.add("Left motor cortex (Anterior Cerebral Artery territory)")
+    lesion_locations.add("Left motor cortex")
     affected_vessels.add("Left Anterior Cerebral Artery (ACA)")
     suggest_imaging = True
 
 if "Left hemiparesis (Upper & Lower equally)" in symptoms:
     lesion_locations.add("Right internal capsule (Subcortical)")
     lesion_locations.add("Right Thalamus (if sensory also affected)")
-    affected_vessels.add("Right Lenticulostriate arteries (MCA deep branches) or Thalamoperforating arteries (PCA deep branches)")
+    affected_vessels.add("Right Lenticulostriate arteries (MCA deep branches)")
+    affected_vessels.add("Thalamoperforating arteries (PCA deep branches)")
     suggest_imaging = True
 elif "Left hemiparesis (Upper> Lower)" in symptoms:
     lesion_locations.add("Right motor cortex")
@@ -91,10 +93,11 @@ elif "Left hemiparesis (Lower> Upper)" in symptoms:
 
 # Rule 2: Aphasia
 if "Aphasia" in symptoms:
-    lesion_locations.add("Left frontal lobe (Broca's area) - Expressive Aphasia")
-    lesion_locations.add("Left temporal lobe (Wernicke's area) - Receptive Aphasia")
+    lesion_locations.add("Left frontal lobe (Broca's area)")
+    lesion_locations.add("Left temporal lobe (Wernicke's area)")
     lesion_locations.add("Left parietal lobe (Conduction Aphasia)")
-    affected_vessels.add("Left Middle Cerebral Artery (MCA) - Superior or Inferior Division (depending on type)")
+    affected_vessels.add("Left Middle Cerebral Artery (MCA) - Superior Division")
+    affected_vessels.add("Left Middle Cerebral Artery (MCA) - Inferior Division")
     suggest_imaging = True
 
 # Rule 3: Neglect
@@ -113,7 +116,8 @@ any_left_hemiparesis = any("Left hemiparesis" in s for s in symptoms)
 if "Facial palsy (Upper & Lower face equally affected)" in symptoms:
     lesion_locations.add("Ipsilateral Pons (Facial nerve nucleus or exiting fascicles)")
     lesion_locations.add("Ipsilateral Facial Nerve (Peripheral palsy)")
-    affected_vessels.add("Basilar Artery branches (e.g., AICA, pontine arteries) or External Carotid Artery branches (for peripheral facial nerve supply)")
+    affected_vessels.add("Basilar Artery branches (e.g. AICA, pontine arteries)")
+    affected_vessels.add("External Carotid Artery branches (for peripheral facial nerve supply)")
     ambiguity_notes.append("For upper & lower face palsy, consider Bell's palsy (peripheral) vs. brainstem stroke/lesion.")
     suggest_imaging = True if use_nihss else suggest_imaging
 
@@ -121,14 +125,17 @@ elif "Facial palsy (Lower face only affected)" in symptoms:
     if any_right_hemiparesis:
         lesion_locations.add("Left precentral gyrus (Lower face motor cortex)")
         lesion_locations.add("Left internal capsule (Corticobulbar tract)")
-        affected_vessels.add("Left Middle Cerebral Artery (MCA) - Superior Division (cortical) or Lenticulostriate arteries (subcortical)")
+        affected_vessels.add("Left Middle Cerebral Artery (MCA) - Superior Division")
+        affected_vessels.add("Left Lenticulostriate arteries (subcortical)")
     elif any_left_hemiparesis:
         lesion_locations.add("Right precentral gyrus (Lower face motor cortex)")
         lesion_locations.add("Right internal capsule (Corticobulbar tract)")
-        affected_vessels.add("Right Middle Cerebral Artery (MCA) - Superior Division (cortical) or Lenticulostriate arteries (subcortical)")
+        affected_vessels.add("Right Middle Cerebral Artery (MCA) - Superior Division")
+        affected_vessels.add("Right Lenticulostriate arteries (subcortical)")
     else:
         lesion_locations.add("Contralateral motor cortex or corticobulbar tract")
-        affected_vessels.add("Contralateral Middle Cerebral Artery (MCA) branches or Lenticulostriate arteries")
+        affected_vessels.add("Contralateral Middle Cerebral Artery (MCA) branches")
+        affected_vessels.add("Contralateral Lenticulostriate arteries")
         ambiguity_notes.append("Lower face palsy without hemiparesis might suggest a focal cortical lesion or lacunar infarct.")
     suggest_imaging = True
 
@@ -136,19 +143,23 @@ elif "Facial palsy (Lower face only affected)" in symptoms:
 if "Vertigo" in symptoms:
     lesion_locations.add("Cerebellum (Vestibulocerebellum)")
     lesion_locations.add("Brainstem (Vestibular nuclei - e.g., lateral medulla for Wallenberg's)")
-    affected_vessels.add("Posterior Inferior Cerebellar Artery (PICA) for lateral medulla (Wallenberg's)")
-    affected_vessels.add("Anterior Inferior Cerebellar Artery (AICA) or Superior Cerebellar Artery (SCA) for cerebellum/pons")
+    affected_vessels.add("Posterior Inferior Cerebellar Artery (PICA)")
+    affected_vessels.add("Anterior Inferior Cerebellar Artery (AICA)")
+    affected_vessels.add("Superior Cerebellar Artery (SCA)")
     ambiguity_notes.append("Vertigo can be peripheral (inner ear) or central (brainstem/cerebellum). Consider other brainstem signs for central origin.")
     suggest_imaging = True if "Brainstem" in str(lesion_locations) or use_nihss else suggest_imaging
 if "Ataxia (Limb)" in symptoms:
     lesion_locations.add("Ipsilateral Cerebellar hemisphere")
     lesion_locations.add("Cerebellar peduncles")
     lesion_locations.add("Brainstem (Pons/Medulla - input/output to cerebellum)")
-    affected_vessels.add("Superior Cerebellar Artery (SCA), AICA, or PICA depending on cerebellar/brainstem location")
+    affected_vessels.add("Superior Cerebellar Artery (SCA)")
+    affected_vessels.add("AICA")
+    affected_vessels.add("PICA")
     suggest_imaging = True
 if "Ataxia (Truncal)" in symptoms:
     lesion_locations.add("Cerebellar vermis")
-    affected_vessels.add("Superior Cerebellar Artery (SCA) or PICA (inferior vermis)")
+    affected_vessels.add("Superior Cerebellar Artery (SCA)")
+    affected_vessels.add("PICA (inferior vermis)")
     ambiguity_notes.append("Truncal ataxia is highly suggestive of cerebellar vermis involvement, often associated with gait instability.")
     suggest_imaging = True
 
@@ -158,14 +169,18 @@ if "Dysarthria" in symptoms:
     lesion_locations.add("Cerebellum")
     lesion_locations.add("Internal capsule")
     lesion_locations.add("Motor cortex (Bilateral lesions)")
-    affected_vessels.add("Basilar Artery branches (pontine arteries), Lenticulostriate arteries, ACA/MCA/PCA branches, non-specific")
+    affected_vessels.add("Basilar Artery branches (pontine arteries)")
+    affected_vessels.add("Lenticulostriate arteries")
+    affected_vessels.add("ACA/MCA/PCA branches (non-specific)")
     ambiguity_notes.append("Dysarthria is a non-localizing sign alone, but in combination with other deficits, it helps pinpoint the lesion.")
     suggest_imaging = True if use_nihss else suggest_imaging
 
 # Rule 7: Seizure (Cortical/Generalized)
 if "Partial seizure" in symptoms:
-    lesion_locations.add("Focal cortical lesion (e.g., Frontal, Temporal, Parietal, Occipital lobe)")
-    affected_vessels.add("Cortical branches of Middle Cerebral Artery (MCA), Anterior Cerebral Artery (ACA), or Posterior Cerebral Artery (PCA)")
+    lesion_locations.add("Focal cortical lesion (e.g. Frontal, Temporal, Parietal, Occipital lobe)")
+    affected_vessels.add("Cortical branches of Middle Cerebral Artery (MCA)")
+    affected_vessels.add("Anterior Cerebral Artery (ACA)")
+    affected_vessels.add("Posterior Cerebral Artery (PCA)")
     ambiguity_notes.append("Partial seizures require localization of the seizure focus. Imaging is crucial.")
     suggest_imaging = True
 if "Generalized seizure" in symptoms:
@@ -178,13 +193,14 @@ if "Emotional disturbances" in symptoms:
     lesion_locations.add("Frontal lobe (Orbitofrontal, medial prefrontal cortex)")
     lesion_locations.add("Temporal lobe (Amygdala, hippocampus)")
     lesion_locations.add("Limbic system structures")
-    affected_vessels.add("Anterior Cerebral Artery (ACA) branches (for frontal lobe), Middle Cerebral Artery (MCA) branches (for temporal lobe)")
+    affected_vessels.add("Anterior Cerebral Artery (ACA) branches (for frontal lobe)")
+    affected_vessels.add("Middle Cerebral Artery (MCA) branches (for temporal lobe)")
     ambiguity_notes.append("Emotional disturbances are highly non-specific and can result from various neurological or psychiatric conditions. Lesion localization is challenging without other signs.")
     suggest_imaging = True if use_nihss else suggest_imaging
 
 # Rule 9: Vision Loss
 if "Vision loss (Homonymous Hemianopia)" in symptoms:
-    st.info("For Homonymous Hemianopia, consider the contralateral lesion. E.g., Left HH -> Right Occipital/Optic Radiation.")
+    st.info("For Homonymous Hemianopia, consider the contralateral lesion. e.g. Left HH -> Right Occipital/Optic Radiation.")
     lesion_locations.add("Contralateral Occipital lobe (Visual cortex)")
     lesion_locations.add("Contralateral Optic radiation (Parietal or Temporal lobe)")
     lesion_locations.add("Contralateral Thalamus (Lateral Geniculate Nucleus)")
@@ -195,7 +211,7 @@ if "Vision loss (Homonymous Hemianopia)" in symptoms:
 elif "Vision loss (Unilateral - optic nerve related)" in symptoms:
     lesion_locations.add("Ipsilateral Optic nerve")
     lesion_locations.add("Optic Chiasm")
-    affected_vessels.add("Ophthalmic Artery (branch of Internal Carotid Artery) for optic nerve")
+    affected_vessels.add("Ophthalmic Artery (branch of Internal Carotid Artery)")
     affected_vessels.add("Anterior Cerebral Artery (ACA) branches for optic chiasm")
     ambiguity_notes.append("Unilateral vision loss can also be ocular in origin. Neurological causes usually involve optic nerve or chiasm.")
     suggest_imaging = True
@@ -207,13 +223,14 @@ if "Sensory loss (Hemibody, all modalities)" in symptoms:
     lesion_locations.add("Contralateral Internal capsule (Sensory tracts)")
     affected_vessels.add("Contralateral Middle Cerebral Artery (MCA) - Parietal branches")
     affected_vessels.add("Contralateral Thalamoperforating arteries (from PCA)")
-    affected_vessels.add("Contralateral Lenticulostriate arteries (from MCA) or Anterior Choroidal Artery (from ICA)")
+    affected_vessels.add("Contralateral Lenticulostriate arteries (from MCA)")
+    affected_vessels.add("Anterior Choroidal Artery (from ICA)")
     suggest_imaging = True
-elif "Sensory loss (Dissociated - e.g., pain/temp affected, light touch spared)" in symptoms:
+elif "Sensory loss (Dissociated - e.g. pain/temp affected, light touch spared)" in symptoms:
     lesion_locations.add("Brainstem (Lateral Medulla for Wallenberg's syndrome - ipsilateral face/contralateral body pain/temp)")
     lesion_locations.add("Spinal Cord (Syringomyelia, Brown-Séquard - level dependent)")
     affected_vessels.add("Posterior Inferior Cerebellar Artery (PICA) for lateral medulla")
-    affected_vessels.add("Spinal Arteries (Anterior or Posterior Spinal Arteries) for spinal cord")
+    affected_vessels.add("Spinal Arteries (Anterior or Posterior Spinal Arteries)")
     ambiguity_notes.append("Dissociated sensory loss strongly suggests a brainstem or spinal cord lesion.")
     suggest_imaging = True
 
@@ -248,11 +265,12 @@ elif "Gaze palsy (Conjugate, away from lesion)" in symptoms:
     lesion_locations.add("Contralateral Frontal eye field (Irritative lesion)")
     lesion_locations.add("Basal Ganglia/Thalamus (less common for conjugate deviation)")
     affected_vessels.add("Contralateral Middle Cerebral Artery (MCA) - Superior Division")
-    affected_vessels.add("Lenticulostriate arteries (from MCA) or Thalamoperforating arteries (from PCA)")
+    affected_vessels.add("Lenticulostriate arteries (from MCA)")
+    affected_vessels.add("Thalamoperforating arteries (from PCA)")
     suggest_imaging = True
 elif "Gaze palsy (Internuclear Ophthalmoplegia - INO)" in symptoms:
     lesion_locations.add("Medial Longitudinal Fasciculus (MLF) in Brainstem (usually Pons)")
-    affected_vessels.add("Basilar Artery branches (pontine arteries, e.g., paramedian branches)")
+    affected_vessels.add("Basilar Artery branches (pontine arteries, e.g. paramedian branches)")
     ambiguity_notes.append("INO is highly suggestive of a brainstem lesion, often seen in multiple sclerosis or stroke.")
     suggest_imaging = True
 
@@ -261,58 +279,77 @@ elif "Gaze palsy (Internuclear Ophthalmoplegia - INO)" in symptoms:
 # Special combined rules for common stroke syndromes
 if "Right hemiparesis (Upper> Lower)" in symptoms and "Aphasia" in symptoms:
     vascular_analysis.add("Left Middle Cerebral Artery (MCA) - Superior Division (classic for Broca's aphasia and right arm/face weakness)")
-    lesion_locations.add("Left Frontal and Parietal Lobes")
+    lesion_locations.add("Left Frontal lobe") # More general to avoid "motor cortex" duplication if already added
+    lesion_locations.add("Left Parietal lobe")
     suggest_imaging = True
 elif "Left hemiparesis (Upper> Lower)" in symptoms and "Neglect" in symptoms:
     vascular_analysis.add("Right Middle Cerebral Artery (MCA) - Inferior Division (classic for neglect and left arm/face weakness)")
-    lesion_locations.add("Right Parietal and Temporal Lobes")
+    lesion_locations.add("Right Parietal lobe") # More general
+    lesion_locations.add("Right Temporal lobe")
     suggest_imaging = True
 elif "Vision loss (Homonymous Hemianopia)" in symptoms and "Aphasia" in symptoms:
     vascular_analysis.add("Left Middle Cerebral Artery (MCA) - complete occlusion or Posterior Cerebral Artery (PCA) - with cortical aphasia")
     ambiguity_notes.append("Homonymous hemianopia with aphasia might suggest a large MCA stroke affecting visual pathways or a complex PCA stroke.")
     suggest_imaging = True
-elif "Vertigo" in symptoms and "Dysarthria" in symptoms and "Facial palsy (Upper & Lower face equally affected)" in symptoms and "Sensory loss (Dissociated - e.g., pain/temp affected, light touch spared)" in symptoms:
+elif all(s in symptoms for s in ["Vertigo", "Dysarthria", "Facial palsy (Upper & Lower face equally affected)", "Sensory loss (Dissociated - e.g., pain/temp affected, light touch spared)"]):
     vascular_analysis.add("Vertebrobasilar System - Posterior Inferior Cerebellar Artery (PICA) - for Lateral Medullary (Wallenberg's) Syndrome")
     lesion_locations.add("Ipsilateral Lateral Medulla")
     suggest_imaging = True
-elif "Right hemiparesis (Upper & Lower equally)" in symptoms and "Facial palsy (Lower face only affected)" in symptoms and "Sensory loss (Hemibody, all modalities)" in symptoms:
+elif all(s in symptoms for s in ["Right hemiparesis (Upper & Lower equally)", "Facial palsy (Lower face only affected)", "Sensory loss (Hemibody, all modalities)"]):
     vascular_analysis.add("Left Lenticulostriate arteries (deep branches of MCA) - for Lacunar Syndrome (Pure Motor or Sensorimotor Stroke)")
-    lesion_locations.add("Left Internal Capsule or Basal Ganglia")
+    lesion_locations.add("Left Internal Capsule")
+    lesion_locations.add("Left Basal Ganglia")
     suggest_imaging = True
-elif "Left hemiparesis (Upper & Lower equally)" in symptoms and "Facial palsy (Lower face only affected)" in symptoms and "Sensory loss (Hemibody, all modalities)" in symptoms:
+elif all(s in symptoms for s in ["Left hemiparesis (Upper & Lower equally)", "Facial palsy (Lower face only affected)", "Sensory loss (Hemibody, all modalities)"]):
     vascular_analysis.add("Right Lenticulostriate arteries (deep branches of MCA) - for Lacunar Syndrome (Pure Motor or Sensorimotor Stroke)")
-    lesion_locations.add("Right Internal Capsule or Basal Ganglia")
+    lesion_locations.add("Right Internal Capsule")
+    lesion_locations.add("Right Basal Ganglia")
     suggest_imaging = True
 
 
-# --- Display Results Section (Order Changed Back) ---
+# --- Display Results Section ---
 
-if lesion_locations:
+if lesion_locations or affected_vessels: # Only show results if there's something to display
     # 1. Display Likely Lesion Locations
-    st.header("Considerations")
-    for loc in sorted(list(lesion_locations)):
-        st.markdown(f"- {loc}")
+    st.header("Likely Lesion Locations")
+    if lesion_locations:
+        for loc in sorted(list(lesion_locations)):
+            st.markdown(f"- {loc}")
+    else:
+        st.info("No specific lesion locations identified from selected symptoms, but vascular involvement may be suggested below.")
 
     if ambiguity_notes:
         st.subheader("Considerations/Ambiguities:")
+        # Use set here to avoid showing same note multiple times if added by different rules
         for note in sorted(list(set(ambiguity_notes))):
             st.info(f"- {note}")
 
     # 2. Display Affected Vascular Territory Analysis
-    st.header("Territory")
+    st.header("Affected Vascular Territory Analysis")
     if vascular_analysis:
         st.subheader("Most Likely Affected Arterial Supply:")
         for vessel in sorted(list(vascular_analysis)):
             st.markdown(f"- **{vessel}**")
-        if affected_vessels:
+
+        # Now, list additional individual vessels *not already covered by the specific syndromes*
+        additional_vessels_to_display = set()
+        for individual_vessel in affected_vessels:
+            is_covered = False
+            for syndrome_vessel in vascular_analysis:
+                if individual_vessel in syndrome_vessel: # Check if the specific vessel is a substring of a syndrome
+                    is_covered = True
+                    break
+            if not is_covered:
+                additional_vessels_to_display.add(individual_vessel)
+
+        if additional_vessels_to_display:
             st.markdown("---")
-            st.info("Additional potentially affected vessels:")
-            for vessel in sorted(list(affected_vessels)):
-                if vessel not in vascular_analysis:
-                    st.markdown(f"- {vessel}")
+            st.info("Additional potentially affected vessels based on individual symptoms:")
+            for vessel in sorted(list(additional_vessels_to_display)):
+                st.markdown(f"- {vessel}")
     else:
         if affected_vessels:
-            st.subheader("Potentially Affected Arterial Supply:")
+            st.subheader("Potentially Affected Arterial Supply (based on individual symptoms):")
             for vessel in sorted(list(affected_vessels)):
                 st.markdown(f"- **{vessel}**")
         else:
@@ -321,12 +358,12 @@ if lesion_locations:
     # 3. Next Steps (Imaging Recommendation)
     if suggest_imaging or use_nihss:
         st.subheader("Next Steps:")
-        st.success("Given the symptoms and potential vascular involvement, **imaging (CT or MRI scan of the brain)** is highly recommended to confirm the lesion location and etiology (e.g., ischemic stroke, hemorrhage).")
+        st.success("Given the symptoms and potential vascular involvement, **imaging (CT scan of the brain)** is highly recommended to confirm the lesion location and etiology (e.g. ischemic stroke, hemorrhage).")
         if "Spinal Cord" in str(lesion_locations):
-            st.success("If spinal cord involvement is suspected (e.g., dissociated sensory loss), **MRI of the spine** may also be indicated.")
+            st.success("If spinal cord involvement is suspected (e.g. dissociated sensory loss), **MRI of the spine** may also be indicated.")
         st.info("Consult with a neurologist for definitive diagnosis and management.")
 
-else:
+else: # This block runs if no lesion_locations AND no affected_vessels were found
     st.warning("No specific lesion or vascular territory suggested. Please refine symptom selection or enter a chief complaint.")
     if chief_complaint:
         st.info("If symptoms are vague or non-localizing, consultation is recommended for further evaluation.")
@@ -336,7 +373,7 @@ else:
 if use_nihss:
     st.header("NIHSS Score Calculator")
 
-    st.markdown("NIHSS calculator is shown because a relevant chief complaint or symptom was entered (e.g., 'weakness', 'aphasia').")
+    st.markdown("NIHSS calculator is shown because a relevant chief complaint or symptom was entered (e.g. 'weakness', 'aphasia').")
 
     score = 0
     missing_items = []
