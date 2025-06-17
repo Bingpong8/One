@@ -221,7 +221,7 @@ elif "Gaze palsy (Internuclear Ophthalmoplegia - INO)" in symptoms:
 
 # Display Results
 if lesion_locations:
-    st.subheader("Likely Lesion Locations:")
+    st.subheader("Consider:")
     for loc in sorted(list(lesion_locations)):
         st.markdown(f"- {loc}")
 
