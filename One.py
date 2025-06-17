@@ -238,7 +238,7 @@ if lesion_locations:
         st.info("Consult with a neurologist for definitive diagnosis and management.")
 
 else:
-    st.warning("No specific lesion matches found. Please refine symptom selection or enter a chief complaint.")
+    st.warning("No specific lesion suggested. Please refine symptom selection or enter a chief complaint.")
     if chief_complaint:
         st.info("If symptoms are vague or non-localizing, consultation is recommended further evaluation.")
 
