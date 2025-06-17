@@ -329,7 +329,6 @@ else:
             st.markdown(f"- **{vessel}**")
     else:
         st.info("No specific arterial territory analysis available for selected symptoms.")
-
 else:
     st.warning("No specific lesion or vascular territory suggested.")
     if chief_complaint:
