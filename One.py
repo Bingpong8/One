@@ -41,7 +41,7 @@ symptoms = st.multiselect("Choose relevant symptoms:", [
 ])
 
 # Determine if NIHSS should be used
-nihss_keywords = ["stroke", "tia", "cva", "ischemia", "hemorrhage", "infarct", "weakness", "numbness", "mute", "stuporous", "palsy", "dysarthria", "hemiparesis", "aoc", "alteration"]
+nihss_keywords = ["stroke", "tia", "cva", "ischemia", "hemorrhage", "infarct", "weakness", "numbness", "mute", "stuporous", "palsy", "dysarthria", "hemiparesis", "aoc", "alteration", "weak", "numb", "passing out"]
 
 use_nihss_from_symptoms = any(any(keyword in s.lower() for keyword in nihss_keywords) for s in symptoms)
 use_nihss_from_chief_complaint = False
@@ -256,16 +256,16 @@ if use_nihss:
         "LOC (Alert to Unresponsive)": ["0", "1", "2", "3"],
         "Month & Age": ["0", "1", "2"],
         "Blink eyes & Squeeze hands": ["0", "1", "2"],
-        "Horizontal gaze palsy": ["0", "1", "2"],
+        "Horizontal gaze palsy (Normal to Forced gaze palsy)": ["0", "1", "2"],
         "Visual (No to Complete hemianopia)": ["0", "1", "2", "3"],
         "Facial palsy (No to Complete paralysis)": ["0", "1", "2", "3"],
-        "Motor arm": ["0", "1", "2", "3", "4"],
-        "Motor leg": ["0", "1", "2", "3", "4"],
-        "Limb ataxia": ["0", "1", "2"],
-        "Sensory": ["0", "1", "2"],
-        "Language": ["0", "1", "2", "3"],
-        "Dysarthria": ["0", "1", "2"],
-        "Extinction/Inattention": ["0", "1", "2"]
+        "Motor arm (No drift, Drift but doesn't hit, Drift and Hit, Some effort against gravity, No effort against gravity, No movement)": ["0", "1", "2", "3", "4"],
+        "Motor leg (Same as arm)": ["0", "1", "2", "3", "4"],
+        "Limb ataxia (No to Both limbs ataxia)": ["0", "1", "2"],
+        "Sensory (Normal, Can sense Touch, No sense)": ["0", "1", "2"],
+        "Language (Normal to Global aphasia)": ["0", "1", "2", "3"],
+        "Dysarthria (No to Severe dysarthria)": ["0", "1", "2"],
+        "Extinction/Inattention (Normal to Neglect)": ["0", "1", "2"]
     }
 
     entered_scores = {}
