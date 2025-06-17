@@ -240,7 +240,7 @@ if "Horner’s syndrome" in symptoms:
 if "Gaze palsy (Conjugate, toward lesion)" in symptoms:
     lesion_locations.add("Ipsilateral Frontal eye field")
     lesion_locations.add("Ipsilateral Pontine gaze center (PPRF)")
-     affected_vessels.add("Middle Cerebral Artery (MCA) - Superior Division (frontal eye field)")
+    affected_vessels.add("Middle Cerebral Artery (MCA) - Superior Division (frontal eye field)")
     affected_vessels.add("Basilar Artery branches (pontine arteries) for PPRF")
     suggest_imaging = True
 elif "Gaze palsy (Conjugate, away from lesion)" in symptoms:
