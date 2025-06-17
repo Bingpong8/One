@@ -247,8 +247,7 @@ else:
 if use_nihss:
     st.header("NIHSS Score Calculator")
 
-    st.markdown("NIHSS calculator is shown because a relevant chief complaint or symptom was entered (e.g., 'stroke', 'TIA'), 
-    Scale of Motor: {No drift, Drift but doesn't hit bed, Drift and Hit, Against gravity, No effort agains gravity, No movements}")
+    st.markdown("NIHSS calculator is shown because a relevant chief complaint or symptom was entered (e.g., 'stroke', 'TIA').")
 
     score = 0
     missing_items = []
