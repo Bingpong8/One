@@ -10,14 +10,14 @@ chief_complaint = st.text_input("e.g., 'weakness', 'dysarthria', 'numbness'", ""
 
 # Symptom checklist
 st.header("Symptoms")
-# Expanded motor symptom options for more precise localization
-symptoms = st.multiselect("Choose relevant symptoms:", [
+
+symptoms = st.multiselect("Choose symptom(s):", [
     "Right hemiparesis (Upper & Lower equally)",   # Subcortical
-    "Right hemiparesis (Arm > Leg)",              # Cortical (e.g., MCA territory)
-    "Right hemiparesis (Leg > Arm)",              # Cortical (e.g., ACA territory)
+    "Right hemiparesis (Upper> Lower)",              # Cortical (e.g., MCA territory)
+    "Right hemiparesis (Lower> Upper)",              # Cortical (e.g., ACA territory)
     "Left hemiparesis (Upper & Lower equally)",   # Subcortical
-    "Left hemiparesis (Arm > Leg)",               # Cortical (e.g., MCA territory)
-    "Left hemiparesis (Leg > Arm)",               # Cortical (e.g., ACA territory)
+    "Left hemiparesis (Upper> Lower)",               # Cortical (e.g., MCA territory)
+    "Left hemiparesis (Lower> Upper)",               # Cortical (e.g., ACA territory)
     "Aphasia",
     "Neglect",
     "Facial palsy (Upper & Lower face equally affected)", # LMN or brainstem (e.g., CN VII nucleus)
@@ -27,8 +27,8 @@ symptoms = st.multiselect("Choose relevant symptoms:", [
     "Partial seizure",       
     "Generalized seizure",   
     "Emotional disturbances", 
-    "Vision loss (Homonymous Hemianopia)", # More specific vision loss
-    "Vision loss (Unilateral, optic nerve related)",
+    "Vision loss (Homonymous Hemianopia)",
+    "Vision loss (Unilateral - optic nerve related)",
     "Ataxia (Limb)",
     "Ataxia (Truncal)",
     "Sensory loss (Hemibody, all modalities)",
@@ -66,10 +66,10 @@ if "Right hemiparesis (Upper & Lower equally)" in symptoms:
     lesion_locations.add("Left internal capsule (Subcortical)")
     lesion_locations.add("Left Thalamus (if sensory also affected)")
     suggest_imaging = True
-elif "Right hemiparesis (Arm > Leg)" in symptoms:
+elif "Right hemiparesis (Upper> Lower)" in symptoms:
     lesion_locations.add("Left motor cortex (Middle Cerebral Artery territory)")
     suggest_imaging = True
-elif "Right hemiparesis (Leg > Arm)" in symptoms:
+elif "Right hemiparesis (Lower> Upper)" in symptoms:
     lesion_locations.add("Left motor cortex (Anterior Cerebral Artery territory)")
     suggest_imaging = True
 
@@ -78,10 +78,10 @@ if "Left hemiparesis (Upper & Lower equally)" in symptoms:
     lesion_locations.add("Right internal capsule (Subcortical)")
     lesion_locations.add("Right Thalamus (if sensory also affected)")
     suggest_imaging = True
-elif "Left hemiparesis (Arm > Leg)" in symptoms:
+elif "Left hemiparesis (Upper> Lower)" in symptoms:
     lesion_locations.add("Right motor cortex (Middle Cerebral Artery territory)")
     suggest_imaging = True
-elif "Left hemiparesis (Leg > Arm)" in symptoms:
+elif "Left hemiparesis (Lower> Upper)" in symptoms:
     lesion_locations.add("Right motor cortex (Anterior Cerebral Artery territory)")
     suggest_imaging = True
 
@@ -155,7 +155,7 @@ if "Partial seizure" in symptoms:
     suggest_imaging = True
 if "Generalized seizure" in symptoms:
     lesion_locations.add("Diffuse cortical dysfunction")
-    ambiguity_notes.append("Generalized seizures often don't have a single focal lesion on imaging but can be associated with metabolic, toxic, or genetic causes. Imaging may still be warranted to rule out structural causes.")
+    ambiguity_notes.append("Generalized seizures often don't have a single focal lesion on imaging but can be associated with metabolic, toxic, or genetic causes. Imaging may still useful to rule out structural causes.")
     suggest_imaging = True # Still good practice to image
 
 # Rule 8: Emotional Disturbances (Non-specific, but can be localized)
