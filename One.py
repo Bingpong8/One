@@ -120,7 +120,7 @@ elif "Facial palsy (Lower face only affected)" in symptoms:
         lesion_locations.add("Right internal capsule (Corticobulbar tract)")
     else: # If UMN facial palsy without clear hemiparesis
         lesion_locations.add("Contralateral motor cortex or corticobulbar tract")
-        ambiguity_notes.append("Lower face palsy without hemiparesis might suggest a focal cortical lesion or lacunar stroke.")
+        ambiguity_notes.append("Lower face palsy without hemiparesis might suggest a focal cortical lesion or lacunar infarct.")
     suggest_imaging = True
 
 # Rule 5: Vertigo and Ataxia (Brainstem/Cerebellum)
@@ -213,7 +213,7 @@ if "Gaze palsy (Conjugate, toward lesion)" in symptoms:
     suggest_imaging = True
 elif "Gaze palsy (Conjugate, away from lesion)" in symptoms:
     lesion_locations.add("Contralateral Frontal eye field (Irritative lesion)")
-    suggest_locations.add("Basal Ganglia/Thalamus (less common for conjugate deviation)") # Added this for completeness
+    suggest_locations.add("Basal Ganglia/Thalamus (less common for conjugate deviation)")
     suggest_imaging = True
 elif "Gaze palsy (Internuclear Ophthalmoplegia - INO)" in symptoms:
     lesion_locations.add("Medial Longitudinal Fasciculus (MLF) in Brainstem (usually Pons)")
@@ -227,7 +227,7 @@ if lesion_locations:
 
     if ambiguity_notes:
         st.subheader("Considerations/Ambiguities:")
-        for note in sorted(list(set(ambiguity_notes))): # Use a set to display unique notes and sort them
+        for note in sorted(list(set(ambiguity_notes))): 
             st.info(f"- {note}")
 
     if suggest_imaging or use_nihss: # Always suggest imaging if stroke keywords present
@@ -240,14 +240,14 @@ if lesion_locations:
 else:
     st.warning("No specific lesion matches found. Please refine symptom selection or enter a chief complaint.")
     if chief_complaint:
-        st.info("If symptoms are vague or non-localizing, consult a healthcare professional for further evaluation.")
+        st.info("If symptoms are vague or non-localizing, consultation is recommended further evaluation.")
 
 
 # NIHSS Calculator if stroke/TIA mentioned
 if use_nihss:
     st.header("NIHSS Score Calculator")
 
-    st.markdown("NIHSS calculator is shown because a relevant chief complaint or symptom was entered (e.g., 'stroke', 'TIA').")
+    st.markdown("NIHSS calculator is shown because a relevant chief complaint or symptom was entered (e.g., 'weak').")
 
     score = 0
     missing_items = []
@@ -259,7 +259,7 @@ if use_nihss:
         "Horizontal gaze palsy (Normal to Forced gaze palsy)": ["0", "1", "2"],
         "Visual (No to Complete hemianopia)": ["0", "1", "2", "3"],
         "Facial palsy (No to Complete paralysis)": ["0", "1", "2", "3"],
-        "Motor arm (No drift, Drift but doesn't hit, Drift and Hit, Some effort against gravity, No effort against gravity, No movement)": ["0", "1", "2", "3", "4"],
+        "Motor arm (No drift, Drift no Hit, Drift & Hit, Some against gravity, No against gravity, No movement)": ["0", "1", "2", "3", "4"],
         "Motor leg (Same as arm)": ["0", "1", "2", "3", "4"],
         "Limb ataxia (No to Both limbs ataxia)": ["0", "1", "2"],
         "Sensory (Normal, Can sense Touch, No sense)": ["0", "1", "2"],
