@@ -299,7 +299,7 @@ if lesion_locations:
             st.info(f"- {note}")
 
     # 2. Display Affected Vascular Territory Analysis
-    st.header("Affected Vascular Territory")
+    st.header("Territory")
     if vascular_analysis:
         st.subheader("Most Likely Affected Arterial Supply:")
         for vessel in sorted(list(vascular_analysis)):
