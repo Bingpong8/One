@@ -57,78 +57,98 @@ suggest_imaging = False
 affected_vessels = set()
 vascular_analysis = set()
 
-# Helper function to add a lesion location, handling standardization
-def add_lesion(location_str):
-    # Standardize common variations or overlapping terms
-    if "internal capsule" in location_str.lower():
-        if "right internal capsule" in location_str.lower():
-            lesion_locations.add("Right Internal Capsule")
-        elif "left internal capsule" in location_str.lower():
-            lesion_locations.add("Left Internal Capsule")
-        else:
-            lesion_locations.add("Internal Capsule") # Fallback for generic
-    elif "thalamus" in location_str.lower():
-        if "right thalamus" in location_str.lower():
-            lesion_locations.add("Right Thalamus")
-        elif "left thalamus" in location_str.lower():
-            lesion_locations.add("Left Thalamus")
-        else:
-            lesion_locations.add("Thalamus") # Fallback for generic
-    elif "motor cortex" in location_str.lower() or "precentral gyrus" in location_str.lower():
-        if "right motor cortex" in location_str.lower() or "right precentral gyrus" in location_str.lower():
-            lesion_locations.add("Right Motor Cortex")
-        elif "left motor cortex" in location_str.lower() or "left precentral gyrus" in location_str.lower():
-            lesion_locations.add("Left Motor Cortex")
-        else:
-            lesion_locations.add("Motor Cortex")
-    elif "parietal lobe" in location_str.lower():
-        if "right parietal lobe" in location_str.lower():
-            lesion_locations.add("Right Parietal Lobe")
-        elif "left parietal lobe" in location_str.lower():
-            lesion_locations.add("Left Parietal Lobe")
-        else:
-            lesion_locations.add("Parietal Lobe")
-    elif "frontal lobe" in location_str.lower():
-        if "right frontal lobe" in location_str.lower():
-            lesion_locations.add("Right Frontal Lobe")
-        elif "left frontal lobe" in location_str.lower():
-            lesion_locations.add("Left Frontal Lobe")
-        else:
-            lesion_locations.add("Frontal Lobe")
-    elif "temporal lobe" in location_str.lower():
-        if "right temporal lobe" in location_str.lower():
-            lesion_locations.add("Right Temporal Lobe")
-        elif "left temporal lobe" in location_str.lower():
-            lesion_locations.add("Left Temporal Lobe")
-        else:
-            lesion_locations.add("Temporal Lobe")
-    elif "occipital lobe" in location_str.lower():
-        if "right occipital lobe" in location_str.lower():
-            lesion_locations.add("Right Occipital Lobe")
-        elif "left occipital lobe" in location_str.lower():
-            lesion_locations.add("Left Occipital Lobe")
-        else:
-            lesion_locations.add("Occipital Lobe")
-    elif "pons" in location_str.lower():
-        lesion_locations.add("Pons (Brainstem)")
-    elif "medulla" in location_str.lower():
-        lesion_locations.add("Medulla (Brainstem)")
-    elif "cerebellum" in location_str.lower():
-        lesion_locations.add("Cerebellum")
-    elif "brainstem" in location_str.lower():
-        lesion_locations.add("Brainstem (General)")
-    elif "spinal cord" in location_str.lower():
-        lesion_locations.add("Spinal Cord")
-    elif "basal ganglia" in location_str.lower():
-        if "right basal ganglia" in location_str.lower():
-            lesion_locations.add("Right Basal Ganglia")
-        elif "left basal ganglia" in location_str.lower():
-            lesion_locations.add("Left Basal Ganglia")
-        else:
-            lesion_locations.add("Basal Ganglia")
-    else: # Add as is if no specific standardization rule
-        lesion_locations.add(location_str)
+# Assuming lesion_locations is a set defined globally or passed as an argument
+# lesion_locations = set()
 
+def add_lesion(location_str):
+    loc = location_str.strip() # Clean input
+    loc_lower = loc.lower()
+
+    # Define specific-to-general mappings for common anatomical structures
+    # Keys are specific terms (or parts of them), values are the more general terms they imply.
+    SPECIFIC_TO_GENERAL_MAPPING = {
+        "right internal capsule": "Internal Capsule",
+        "left internal capsule": "Internal Capsule",
+        "right thalamus": "Thalamus",
+        "left thalamus": "Thalamus",
+        "right motor cortex": "Motor Cortex",
+        "left motor cortex": "Motor Cortex",
+        "right parietal lobe": "Parietal Lobe",
+        "left parietal lobe": "Parietal Lobe",
+        "right frontal lobe": "Frontal Lobe",
+        "left frontal lobe": "Frontal Lobe",
+        "right temporal lobe": "Temporal Lobe",
+        "left temporal lobe": "Temporal Lobe",
+        "right occipital lobe": "Occipital Lobe",
+        "left occipital lobe": "Occipital Lobe",
+        "lateral medulla": "Brainstem (General)",
+        "pons": "Brainstem (General)",
+        "medulla": "Brainstem (General)",
+        "right basal ganglia": "Basal Ganglia",
+        "left basal ganglia": "Basal Ganglia",
+        "right subcortical white matter": "Subcortical White Matter",
+        "left subcortical white matter": "Subcortical White Matter",
+    }
+
+    # First, check if the incoming lesion is a specific version of something already general
+    added_specific = False
+    for specific_term_part, general_term in SPECIFIC_TO_GENERAL_MAPPING.items():
+        if specific_term_part in loc_lower:
+            # If we're adding a specific term (e.g., "Right Internal Capsule")
+            # And the general term already exists (e.g., "Internal Capsule")
+            if general_term in lesion_locations:
+                lesion_locations.remove(general_term) # Remove the general term
+            lesion_locations.add(loc) # Add the specific term
+            added_specific = True
+            break # Once matched, no need to check other specific mappings
+
+    if added_specific:
+        return # We've handled this specific case, exit
+
+    # If the incoming lesion is a general term, check if a more specific version already exists
+    # If a more specific version of the incoming general term is already present, do NOT add the general one.
+    if loc in ["Internal Capsule", "Thalamus", "Motor Cortex", "Parietal Lobe", "Frontal Lobe",
+               "Temporal Lobe", "Occipital Lobe", "Basal Ganglia", "Subcortical White Matter"]:
+        # Check if any specific variant of this general term already exists
+        specific_exists = False
+        for specific_term_part, general_term in SPECIFIC_TO_GENERAL_MAPPING.items():
+            if general_term == loc: # If the current 'loc' is the general term in our map
+                if f"right {general_term.lower()}" in [l.lower() for l in lesion_locations] or \
+                   f"left {general_term.lower()}" in [l.lower() for l in lesion_locations]:
+                    specific_exists = True
+                    break
+        if not specific_exists:
+            lesion_locations.add(loc) # Add the general term only if no specific one exists
+        return # Handled a general term, exit
+
+    # Handle Brainstem hierarchy separately as it's a bit different
+    if "brainstem" in loc_lower:
+        if loc_lower == "lateral medulla" or loc_lower == "pons" or loc_lower == "medulla":
+            # If adding specific brainstem part, remove general if present
+            if "Brainstem (General)" in lesion_locations:
+                lesion_locations.remove("Brainstem (General)")
+            # Add specific brainstem part with consistent naming
+            if loc_lower == "lateral medulla":
+                lesion_locations.add("Lateral Medulla (Brainstem)")
+            elif loc_lower == "pons":
+                lesion_locations.add("Pons (Brainstem)")
+            elif loc_lower == "medulla":
+                lesion_locations.add("Medulla (Brainstem)")
+        elif loc_lower == "brainstem (general)":
+            # Add general brainstem only if no specific part already exists
+            if not any(bs_part in [l.lower() for l in lesion_locations] for bs_part in ["lateral medulla (brainstem)", "pons (brainstem)", "medulla (brainstem)"]):
+                lesion_locations.add("Brainstem (General)")
+        else: # For other brainstem-related terms, add directly
+            lesion_locations.add(loc)
+        return
+
+    # If none of the above specific/general rules apply, just add it.
+    lesion_locations.add(loc)
+
+# Example usage within your symptom rules:
+# In your symptom rules, you would call add_lesion("Left Internal Capsule")
+# or add_lesion("Internal Capsule") as appropriate. The add_lesion function
+# itself now handles the intelligent de-duplication.
 
 # Rule 1: Hemiparesis Patterns
 if "Right hemiparesis (Upper & Lower equally)" in symptoms:
