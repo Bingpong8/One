@@ -294,24 +294,6 @@ elif "Left hemiparesis (Upper & Lower equally)" in symptoms and "Facial palsy (L
     suggest_imaging = True
 
 
-if vascular_analysis:
-    st.subheader("Most Likely Affected Arterial Supply:")
-    for vessel in sorted(list(vascular_analysis)):
-        st.markdown(f"- **{vessel}**")
-    if affected_vessels: # Also list individual vessel suggestions if specific patterns weren't met
-        st.markdown("---")
-        st.info("Additional potentially affected vessels:")
-        for vessel in sorted(list(affected_vessels)):
-            if vessel not in vascular_analysis: # Avoid duplicating
-                st.markdown(f"- {vessel}")
-else:
-    if affected_vessels: # If no combined pattern, show individual vessel suggestions
-        st.subheader("Potentially Affected Arterial Supply (based on symptoms):")
-        for vessel in sorted(list(affected_vessels)):
-            st.markdown(f"- **{vessel}**")
-    else:
-        st.info("No specific arterial territory analysis available for selected symptoms.")
-
 # Display Results
 if lesion_locations:
     st.subheader("Considerations")
@@ -329,6 +311,24 @@ if lesion_locations:
         if "Spinal Cord" in str(lesion_locations):
             st.success("If spinal cord involvement is suspected (e.g., dissociated sensory loss), **MRI of the spine** may also be indicated.")
         st.info("Consult with a neurologist for definitive diagnosis and management.")
+        
+if vascular_analysis:
+    st.subheader("Most Likely Affected Arterial Supply:")
+    for vessel in sorted(list(vascular_analysis)):
+        st.markdown(f"- **{vessel}**")
+    if affected_vessels: # Also list individual vessel suggestions if specific patterns weren't met
+        st.markdown("---")
+        st.info("Additional potentially affected vessels:")
+        for vessel in sorted(list(affected_vessels)):
+            if vessel not in vascular_analysis: # Avoid duplicating
+                st.markdown(f"- {vessel}")
+else:
+    if affected_vessels: # If no combined pattern, show individual vessel suggestions
+        st.subheader("Potentially Affected Arterial Supply (based on symptoms):")
+        for vessel in sorted(list(affected_vessels)):
+            st.markdown(f"- **{vessel}**")
+    else:
+        st.info("No specific arterial territory analysis available for selected symptoms.")
 
 else:
     st.warning("No specific lesion or vascular territory suggested.")
