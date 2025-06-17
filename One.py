@@ -587,7 +587,7 @@ elif all(s in symptoms for s in ["Left hemiparesis (Upper & Lower equally)", "Fa
 
 if lesion_locations or affected_vessels:
     # 1. Display Likely Lesion Locations
-    st.header("Likely Lesion Locations")
+    st.header("Considers")
     if lesion_locations:
         for loc in sorted(list(lesion_locations)):
             st.markdown(f"- {loc}")
@@ -600,7 +600,7 @@ if lesion_locations or affected_vessels:
             st.info(f"- {note}")
 
     # 2. Display Affected Vascular Territory Analysis
-    st.header("Affected Vascular Territory Analysis")
+    st.header("Territory")
     if vascular_analysis:
         st.subheader("Most Likely Affected Arterial Supply:")
         for vessel_syndrome in sorted(list(vascular_analysis)):
@@ -648,13 +648,13 @@ if lesion_locations or affected_vessels:
 
         if additional_vessels_to_display:
             st.markdown("---")
-            st.info("Additional potentially affected vessels based on individual symptoms (not explicitly covered by a main syndrome):")
+            st.info("Additional potentially affected vessels based on symptoms:")
             for vessel in sorted(list(additional_vessels_to_display)):
                 st.markdown(f"- {vessel}")
     else:
         # If no specific vascular syndrome matched, just display all identified affected_vessels
         if affected_vessels:
-            st.subheader("Potentially Affected Arterial Supply (based on individual symptoms):")
+            st.subheader("Potentially Affected Arterial Supply based on symptoms):")
             for vessel in sorted(list(affected_vessels)):
                 st.markdown(f"- **{vessel}**")
         else:
@@ -663,13 +663,13 @@ if lesion_locations or affected_vessels:
     # 3. Next Steps (Imaging Recommendation)
     if suggest_imaging or use_nihss:
         st.subheader("Next Steps:")
-        st.success("Given the symptoms and potential vascular involvement, **imaging (CT or MRI scan of the brain)** is highly recommended to confirm the lesion location and etiology (e.g., ischemic stroke, hemorrhage).")
+        st.success("Given the symptoms and potential vascular involvement, **imaging (CT or MRI scan of the brain)** is highly recommended to confirm the lesion location and etiology.")
         if "Spinal Cord" in str(lesion_locations):
             st.success("If spinal cord involvement is suspected (e.g., dissociated sensory loss), **MRI of the spine** may also be indicated.")
         st.info("Consult with a neurologist for definitive diagnosis and management.")
 
 else:
-    st.warning("No specific lesion or vascular territory suggested. Please refine symptom selection or enter a chief complaint.")
+    st.warning("No specific lesion or vascular territory suggested. Please refine symptom selection.")
     if chief_complaint:
         st.info("If symptoms are vague or non-localizing, consultation is recommended for further evaluation.")
 
@@ -678,7 +678,7 @@ else:
 if use_nihss:
     st.header("NIHSS Score Calculator")
 
-    st.markdown("NIHSS calculator is shown because a relevant chief complaint or symptom was entered (e.g., 'weakness', 'aphasia').")
+    st.markdown("NIHSS calculator is shown because a relevant chief complaint or symptom was entered (e.g.weakness).")
 
     score = 0
     missing_items = []
