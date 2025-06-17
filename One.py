@@ -306,13 +306,13 @@ if lesion_locations:
             st.markdown(f"- **{vessel}**")
         if affected_vessels:
             st.markdown("---")
-            st.info("Additional potentially affected vessels based on individual symptoms:")
+            st.info("Additional potentially affected vessels:")
             for vessel in sorted(list(affected_vessels)):
                 if vessel not in vascular_analysis:
                     st.markdown(f"- {vessel}")
     else:
         if affected_vessels:
-            st.subheader("Potentially Affected Arterial Supply (based on symptoms):")
+            st.subheader("Potentially Affected Arterial Supply:")
             for vessel in sorted(list(affected_vessels)):
                 st.markdown(f"- **{vessel}**")
         else:
