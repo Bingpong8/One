@@ -4,11 +4,9 @@ st.set_page_config(page_title="One", layout="centered", initial_sidebar_state="e
 
 st.title("Weird Localizer & N Calculator")
 
-# --- Chief Complaint Text Input ---
 st.header("Chief Complaint")
 chief_complaint = st.text_input("e.g., 'weakness', 'dysarthria', 'numbness'", "").strip()
 
-# Symptom checklist
 st.header("Symptoms")
 
 symptoms = st.multiselect("Choose symptom(s):", [
@@ -40,7 +38,6 @@ symptoms = st.multiselect("Choose symptom(s):", [
     "Gaze palsy (Internuclear Ophthalmoplegia - INO)" # Specific brainstem lesion
 ])
 
-# Determine if NIHSS should be used
 nihss_keywords = ["stroke", "tia", "cva", "ischemia", "hemorrhage", "infarct", "weakness", "numbness", "mute", "stuporous", "palsy", "dysarthria", "hemiparesis", "aoc", "alteration", "weak", "numb", "passing out", "seizure", "aphasia", "neglect", "vertigo", "ataxia", "sensory loss", "gaze palsy"]
 
 use_nihss_from_symptoms = any(any(keyword in s.lower() for keyword in nihss_keywords) for s in symptoms)
