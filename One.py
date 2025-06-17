@@ -5,8 +5,8 @@ st.set_page_config(page_title="One", layout="centered", initial_sidebar_state="e
 st.title("Weird Localizer & N Calculator")
 
 # --- Chief Complaint Text Input ---
-st.header("Chief Complaint")
-chief_complaint = st.text_input("e.g., 'weakness', 'dysarthria', 'numbness'", "").strip()
+st.header("Presentation")
+chief_complaint = st.text_input("e.g. weakness, dysarthria, numbness").strip()
 
 # Symptom checklist
 st.header("Symptoms")
@@ -32,7 +32,7 @@ symptoms = st.multiselect("Choose symptom(s):", [
     "Ataxia (Limb)",
     "Ataxia (Truncal)",
     "Sensory loss (Hemibody, all modalities)",
-    "Sensory loss (Dissociated - e.g., pain/temp affected, light touch spared)", # Brainstem/spinal cord
+    "Sensory loss (Dissociated - e.g. pain/temp affected, light touch spared)", # Brainstem/spinal cord
     "Tongue deviation",
     "Horner’s syndrome",
     "Gaze palsy (Conjugate, toward lesion)",
@@ -453,7 +453,7 @@ if "Dysarthria" in symptoms:
 
 # Rule 7: Seizure (Cortical/Generalized)
 if "Partial seizure" in symptoms:
-    add_lesion("Focal cortical lesion (e.g., Frontal, Temporal, Parietal, Occipital lobe)")
+    add_lesion("Focal cortical lesion (e.g. Frontal, Temporal, Parietal, Occipital lobe)")
     add_vessel_to_affected("Middle Cerebral Artery (MCA) branches") # Standardized
     add_vessel_to_affected("Anterior Cerebral Artery (ACA)") # Standardized
     add_vessel_to_affected("Posterior Cerebral Artery (PCA)") # Standardized
@@ -476,7 +476,7 @@ if "Emotional disturbances" in symptoms:
 
 # Rule 9: Vision Loss
 if "Vision loss (Homonymous Hemianopia)" in symptoms:
-    st.info("For Homonymous Hemianopia, consider the contralateral lesion. E.g., Left HH -> Right Occipital/Optic Radiation.")
+    st.info("For Homonymous Hemianopia, consider the contralateral lesion. e.g. Left HH -> Right Occipital/Optic Radiation.")
     add_lesion("Contralateral Occipital Lobe (Visual cortex)")
     add_lesion("Contralateral Optic radiation (Parietal or Temporal lobe)")
     add_lesion("Contralateral Thalamus (Lateral Geniculate Nucleus)")
@@ -502,7 +502,7 @@ if "Sensory loss (Hemibody, all modalities)" in symptoms:
     add_vessel_to_affected("Lenticulostriate arteries") # Standardized
     add_vessel_to_affected("Anterior Choroidal Artery") # Standardized
     suggest_imaging = True
-elif "Sensory loss (Dissociated - e.g., pain/temp affected, light touch spared)" in symptoms:
+elif "Sensory loss (Dissociated - e.g. pain/temp affected, light touch spared)" in symptoms:
     add_lesion("Brainstem (Lateral Medulla for Wallenberg's syndrome - ipsilateral face/contralateral body pain/temp)")
     add_lesion("Spinal Cord")
     add_vessel_to_affected("Posterior Inferior Cerebellar Artery (PICA)") # Standardized
@@ -567,7 +567,7 @@ elif "Vision loss (Homonymous Hemianopia)" in symptoms and "Aphasia" in symptoms
     vascular_analysis.add("Left Middle Cerebral Artery (MCA) - complete occlusion or Posterior Cerebral Artery (PCA) - with cortical aphasia")
     ambiguity_notes.add("Homonymous hemianopia with aphasia might suggest a large MCA stroke affecting visual pathways or a complex PCA stroke.")
     suggest_imaging = True
-elif all(s in symptoms for s in ["Vertigo", "Dysarthria", "Facial palsy (Upper & Lower face equally affected)", "Sensory loss (Dissociated - e.g., pain/temp affected, light touch spared)"]):
+elif all(s in symptoms for s in ["Vertigo", "Dysarthria", "Facial palsy (Upper & Lower face equally affected)", "Sensory loss (Dissociated - e.g. pain/temp affected, light touch spared)"]):
     vascular_analysis.add("Vertebrobasilar System - Posterior Inferior Cerebellar Artery (PICA) - for Lateral Medullary (Wallenberg's) Syndrome")
     add_lesion("Lateral Medulla (Brainstem)") # Add with standardization
     suggest_imaging = True
@@ -665,7 +665,7 @@ if lesion_locations or affected_vessels:
         st.subheader("Next Steps:")
         st.success("Given the symptoms and potential vascular involvement, **imaging (CT or MRI scan of the brain)** is highly recommended to confirm the lesion location and etiology.")
         if "Spinal Cord" in str(lesion_locations):
-            st.success("If spinal cord involvement is suspected (e.g., dissociated sensory loss), **MRI of the spine** may also be indicated.")
+            st.success("If spinal cord involvement is suspected (e.g. dissociated sensory loss), **MRI of the spine** may also be indicated.")
         st.info("Consult with a neurologist for definitive diagnosis and management.")
 
 else:
