@@ -12,23 +12,23 @@ chief_complaint = st.text_input("e.g., 'weakness', 'dysarthria', 'numbness'", ""
 st.header("Symptoms")
 
 symptoms = st.multiselect("Choose symptom(s):", [
-    "Right hemiparesis (Upper & Lower equally)",   # Subcortical
-    "Right hemiparesis (Upper> Lower)",              # Cortical (e.g., MCA territory)
-    "Right hemiparesis (Lower> Upper)",              # Cortical (e.g., ACA territory)
-    "Left hemiparesis (Upper & Lower equally)",   # Subcortical
-    "Left hemiparesis (Upper> Lower)",               # Cortical (e.g., MCA territory)
-    "Left hemiparesis (Lower> Upper)",               # Cortical (e.g., ACA territory)
+    "Right hemiparesis (Upper & Lower equally)",    # Subcortical
+    "Right hemiparesis (Upper> Lower)",             # Cortical (e.g., MCA territory)
+    "Right hemiparesis (Lower> Upper)",             # Cortical (e.g., ACA territory)
+    "Left hemiparesis (Upper & Lower equally)",    # Subcortical
+    "Left hemiparesis (Upper> Lower)",              # Cortical (e.g., MCA territory)
+    "Left hemiparesis (Lower> Upper)",              # Cortical (e.g., ACA territory)
     "Aphasia",
     "Neglect",
     "Facial palsy (Upper & Lower face equally affected)", # LMN or brainstem (e.g., CN VII nucleus)
-    "Facial palsy (Lower face only affected)",           # UMN (cortical or corticobulbar tract)
+    "Facial palsy (Lower face only affected)",             # UMN (cortical or corticobulbar tract)
     "Vertigo",
     "Dysarthria",
-    "Partial seizure",       
-    "Generalized seizure",   
-    "Emotional disturbances", 
+    "Partial seizure",
+    "Generalized seizure",
+    "Emotional disturbances",
     "Vision loss (Homonymous Hemianopia)",
-    "Vision loss (Unilateral - optic nerve related)",
+    "Vision loss (Unilateral - optic nerve related)", # Preserving your exact wording
     "Ataxia (Limb)",
     "Ataxia (Truncal)",
     "Sensory loss (Hemibody, all modalities)",
@@ -41,7 +41,7 @@ symptoms = st.multiselect("Choose symptom(s):", [
 ])
 
 # Determine if NIHSS should be used
-nihss_keywords = ["stroke", "tia", "cva", "ischemia", "hemorrhage", "infarct", "weakness", "numbness", "mute", "stuporous", "palsy", "dysarthria", "hemiparesis", "aoc", "alteration", "weak", "numb", "passing out", "seizure", "aphasia", "neglect", "vertigo", "ataxia", "sensory loss", "gaze palsy"]
+nihss_keywords = ["stroke", "tia", "cva", "ischemia", "hemorrhage", "infarct", "weakness", "numbness", "mute", "stuporous", "palsy", "dysarthria", "hemiparesis", "aoc", "alteration", "weak", "numb", "passing out", "seizure", "aphasia", "neglect", "vertigo", "ataxia", "sensory loss", "gaze palsy"] # Added more keywords to broadly trigger NIHSS
 
 use_nihss_from_symptoms = any(any(keyword in s.lower() for keyword in nihss_keywords) for s in symptoms)
 use_nihss_from_chief_complaint = False
@@ -59,6 +59,7 @@ st.header("Likely Lesion Locations")
 lesion_locations = set() # Use a set to store unique locations
 ambiguity_notes = [] # To store notes about ambiguous data
 suggest_imaging = False # Flag to suggest imaging
+affected_vessels = set() # NEW: Set to store potentially affected vessels
 
 # Rule 1: Hemiparesis Patterns
 # Right side weakness -> Left Hemisphere
@@ -116,7 +117,7 @@ any_left_hemiparesis = any("Left hemiparesis" in s for s in symptoms)
 if "Facial palsy (Upper & Lower face equally affected)" in symptoms:
     lesion_locations.add("Ipsilateral Pons (Facial nerve nucleus or exiting fascicles)")
     lesion_locations.add("Ipsilateral Facial Nerve (Peripheral palsy)")
-    affected_vessels.add("Basilar Artery branches (e.g., AICA, pontine arteries) or External Carotid Artery branches (for peripheral facial nerve supply)")
+    affected_vessels.add("Basilar Artery branches (e.g., AICA, pontine arteries) or External Carotid Artery branches (for peripheral facial nerve supply)") # AICA for pons, ECA for peripheral
     ambiguity_notes.append("For upper & lower face palsy, consider Bell's palsy (peripheral) vs. brainstem stroke/lesion.")
     suggest_imaging = True if use_nihss else suggest_imaging # If stroke suspected, image
 
@@ -161,19 +162,21 @@ if "Dysarthria" in symptoms:
     lesion_locations.add("Cerebellum")
     lesion_locations.add("Internal capsule")
     lesion_locations.add("Motor cortex (Bilateral lesions)")
-    affected_vessels.add("Basilar Artery branches (pontine arteries), Lenticulostriate arteries, ACA/MCA/PCA branches, non-specific")
+    affected_vessels.add("Basilar Artery branches (pontine arteries), Lenticulostriate arteries, ACA/MCA/PCA branches, non-specific") # Very non-specific, covers multiple vascular territories
     ambiguity_notes.append("Dysarthria is a non-localizing sign alone, but in combination with other deficits, it helps pinpoint the lesion.")
     suggest_imaging = True if use_nihss else suggest_imaging
 
 # Rule 7: Seizure (Cortical/Generalized)
 if "Partial seizure" in symptoms:
     lesion_locations.add("Focal cortical lesion (e.g., Frontal, Temporal, Parietal, Occipital lobe)")
+    # Seizures can be due to various causes, not just vascular, but if it's cortical, MCA/ACA/PCA branches are possible.
+    affected_vessels.add("Cortical branches of Middle Cerebral Artery (MCA), Anterior Cerebral Artery (ACA), or Posterior Cerebral Artery (PCA)")
     ambiguity_notes.append("Partial seizures require localization of the seizure focus. Imaging is crucial.")
     suggest_imaging = True
 if "Generalized seizure" in symptoms:
     lesion_locations.add("Diffuse cortical dysfunction")
     ambiguity_notes.append("Generalized seizures often don't have a single focal lesion on imaging but can be associated with metabolic, toxic, or genetic causes. Imaging may still useful to rule out structural causes.")
-    suggest_imaging = True # Still good practice to image
+    suggest_imaging = True
 
 # Rule 8: Emotional Disturbances (Non-specific, but can be localized)
 if "Emotional disturbances" in symptoms:
@@ -182,7 +185,7 @@ if "Emotional disturbances" in symptoms:
     lesion_locations.add("Limbic system structures")
     affected_vessels.add("Anterior Cerebral Artery (ACA) branches (for frontal lobe), Middle Cerebral Artery (MCA) branches (for temporal lobe)")
     ambiguity_notes.append("Emotional disturbances are highly non-specific and can result from various neurological or psychiatric conditions. Lesion localization is challenging without other signs.")
-    suggest_imaging = True if use_nihss else suggest_imaging 
+    suggest_imaging = True if use_nihss else suggest_imaging
 
 # Rule 9: Vision Loss
 if "Vision loss (Homonymous Hemianopia)" in symptoms:
@@ -192,8 +195,9 @@ if "Vision loss (Homonymous Hemianopia)" in symptoms:
     lesion_locations.add("Contralateral Thalamus (Lateral Geniculate Nucleus)")
     affected_vessels.add("Contralateral Posterior Cerebral Artery (PCA) - Calcarine branch (for occipital cortex)")
     affected_vessels.add("Contralateral Middle Cerebral Artery (MCA) - deep branches (for optic radiations in temporal lobe)")
+    affected_vessels.add("Contralateral Thalamoperforating arteries (from PCA) for thalamus")
     suggest_imaging = True
-elif "Vision loss (Unilateral, optic nerve related)" in symptoms:
+elif "Vision loss (Unilateral - optic nerve related)" in symptoms: # Preserving your exact wording
     lesion_locations.add("Ipsilateral Optic nerve")
     lesion_locations.add("Optic Chiasm")
     affected_vessels.add("Ophthalmic Artery (branch of Internal Carotid Artery) for optic nerve")
@@ -222,6 +226,8 @@ elif "Sensory loss (Dissociated - e.g., pain/temp affected, light touch spared)"
 if "Tongue deviation" in symptoms:
     lesion_locations.add("Ipsilateral Medulla (Hypoglossal nucleus - CN XII)")
     lesion_locations.add("Ipsilateral Hypoglossal Nerve (Peripheral)")
+    affected_vessels.add("Vertebral Artery or its medullary branches")
+    ambiguity_notes.append("Tongue deviation can be due to central or peripheral lesions. Unilateral weakness causing deviation to the weak side.")
     suggest_imaging = True if use_nihss else suggest_imaging
 
 # Rule 12: Horner’s syndrome
@@ -245,22 +251,23 @@ if "Gaze palsy (Conjugate, toward lesion)" in symptoms:
     suggest_imaging = True
 elif "Gaze palsy (Conjugate, away from lesion)" in symptoms:
     lesion_locations.add("Contralateral Frontal eye field (Irritative lesion)")
-    suggest_locations.add("Basal Ganglia/Thalamus (less common for conjugate deviation)")
+    lesion_locations.add("Basal Ganglia/Thalamus (less common for conjugate deviation)") # Added this for completeness
     affected_vessels.add("Contralateral Middle Cerebral Artery (MCA) - Superior Division")
     affected_vessels.add("Lenticulostriate arteries (from MCA) or Thalamoperforating arteries (from PCA)")
     suggest_imaging = True
 elif "Gaze palsy (Internuclear Ophthalmoplegia - INO)" in symptoms:
     lesion_locations.add("Medial Longitudinal Fasciculus (MLF) in Brainstem (usually Pons)")
     affected_vessels.add("Basilar Artery branches (pontine arteries, e.g., paramedian branches)")
+    ambiguity_notes.append("INO is highly suggestive of a brainstem lesion, often seen in multiple sclerosis or stroke.")
     suggest_imaging = True
 
 
 # --- Combine for Vascular Territory Analysis (New Section) ---
-st.header("Affected Vascular Territory Analysis") # Added Step 4
-vascular_analysis = set()
+st.header("Affected Vascular Territory Analysis")
+vascular_analysis = set() # NEW: Set to store specific vascular syndromes
 
 # Special combined rules for common stroke syndromes
-# Example: Right hemiparesis (Arm > Leg) + Aphasia -> Left MCA superior division
+# Example: Right hemiparesis (Upper> Lower) + Aphasia -> Left MCA superior division
 if "Right hemiparesis (Upper> Lower)" in symptoms and "Aphasia" in symptoms:
     vascular_analysis.add("Left Middle Cerebral Artery (MCA) - Superior Division (classic for Broca's aphasia and right arm/face weakness)")
     lesion_locations.add("Left Frontal and Parietal Lobes") # Reinforce specific lobes
@@ -269,19 +276,19 @@ elif "Left hemiparesis (Upper> Lower)" in symptoms and "Neglect" in symptoms:
     vascular_analysis.add("Right Middle Cerebral Artery (MCA) - Inferior Division (classic for neglect and left arm/face weakness)")
     lesion_locations.add("Right Parietal and Temporal Lobes") # Reinforce specific lobes
     suggest_imaging = True
-elif "Homonymous Hemianopia" in symptoms and "Aphasia" in symptoms:
+elif "Vision loss (Homonymous Hemianopia)" in symptoms and "Aphasia" in symptoms: # Changed from "Homonymous Hemianopia"
     vascular_analysis.add("Left Middle Cerebral Artery (MCA) - complete occlusion or Posterior Cerebral Artery (PCA) - with cortical aphasia")
     ambiguity_notes.append("Homonymous hemianopia with aphasia might suggest a large MCA stroke affecting visual pathways or a complex PCA stroke.")
     suggest_imaging = True
-elif "Vertigo" in symptoms and "Dysarthria" in symptoms and "Ipsilateral Facial palsy (Upper & Lower face equally affected)" in symptoms and "Contralateral sensory loss" in symptoms:
+elif "Vertigo" in symptoms and "Dysarthria" in symptoms and "Facial palsy (Upper & Lower face equally affected)" in symptoms and "Sensory loss (Dissociated - e.g., pain/temp affected, light touch spared)" in symptoms: # Used your exact wording for symptoms
     vascular_analysis.add("Vertebrobasilar System - Posterior Inferior Cerebellar Artery (PICA) - for Lateral Medullary (Wallenberg's) Syndrome")
     lesion_locations.add("Ipsilateral Lateral Medulla")
     suggest_imaging = True
-elif "Right hemiparesis (Upper & Lower equally)" in symptoms and "Right Facial palsy (Lower face only affected)" in symptoms and "Right sensory loss (Hemibody, all modalities)" in symptoms:
+elif "Right hemiparesis (Upper & Lower equally)" in symptoms and "Facial palsy (Lower face only affected)" in symptoms and "Sensory loss (Hemibody, all modalities)" in symptoms: # Used your exact wording for symptoms
     vascular_analysis.add("Left Lenticulostriate arteries (deep branches of MCA) - for Lacunar Syndrome (Pure Motor or Sensorimotor Stroke)")
     lesion_locations.add("Left Internal Capsule or Basal Ganglia")
     suggest_imaging = True
-elif "Left hemiparesis (Upper & Lower equally)" in symptoms and "Left Facial palsy (Lower face only affected)" in symptoms and "Left sensory loss (Hemibody, all modalities)" in symptoms:
+elif "Left hemiparesis (Upper & Lower equally)" in symptoms and "Facial palsy (Lower face only affected)" in symptoms and "Sensory loss (Hemibody, all modalities)" in symptoms: # Used your exact wording for symptoms
     vascular_analysis.add("Right Lenticulostriate arteries (deep branches of MCA) - for Lacunar Syndrome (Pure Motor or Sensorimotor Stroke)")
     lesion_locations.add("Right Internal Capsule or Basal Ganglia")
     suggest_imaging = True
@@ -291,14 +298,14 @@ if vascular_analysis:
     st.subheader("Most Likely Affected Arterial Supply:")
     for vessel in sorted(list(vascular_analysis)):
         st.markdown(f"- **{vessel}**")
-    if affected_vessels:
+    if affected_vessels: # Also list individual vessel suggestions if specific patterns weren't met
         st.markdown("---")
         st.info("Additional potentially affected vessels based on individual symptoms:")
         for vessel in sorted(list(affected_vessels)):
-            if vessel not in vascular_analysis:
+            if vessel not in vascular_analysis: # Avoid duplicating
                 st.markdown(f"- {vessel}")
 else:
-    if affected_vessels:
+    if affected_vessels: # If no combined pattern, show individual vessel suggestions
         st.subheader("Potentially Affected Arterial Supply (based on individual symptoms):")
         for vessel in sorted(list(affected_vessels)):
             st.markdown(f"- **{vessel}**")
@@ -307,7 +314,7 @@ else:
 
 # Display Results
 if lesion_locations:
-    st.subheader("Likely Lesion Locations") # Changed to Step 5
+    st.subheader("Likely Lesion Locations")
     for loc in sorted(list(lesion_locations)):
         st.markdown(f"- {loc}")
 
@@ -316,7 +323,7 @@ if lesion_locations:
         for note in sorted(list(set(ambiguity_notes))):
             st.info(f"- {note}")
 
-    if suggest_imaging or use_nihss:
+    if suggest_imaging or use_nihss: # Always suggest imaging if stroke keywords present
         st.subheader("Next Steps:")
         st.success("Given the symptoms and potential vascular involvement, **imaging (CT or MRI scan of the brain)** is highly recommended to confirm the lesion location and etiology (e.g., ischemic stroke, hemorrhage).")
         if "Spinal Cord" in str(lesion_locations):
@@ -326,14 +333,14 @@ if lesion_locations:
 else:
     st.warning("No specific lesion or vascular territory suggested. Please refine symptom selection or enter a chief complaint.")
     if chief_complaint:
-        st.info("If symptoms are vague or non-localizing, consultation is recommended for further evaluation.")
+        st.info("If symptoms are vague or non-localizing, consultation is recommended further evaluation.")
 
 
 # NIHSS Calculator if stroke/TIA mentioned
 if use_nihss:
-    st.header("NIHSS Score Calculator") # Changed to Step 6
+    st.header("NIHSS Score Calculator")
 
-    st.markdown("NIHSS calculator is shown because a relevant chief complaint or symptom was entered (e.g., 'weakness', 'aphasia').")
+    st.markdown("NIHSS calculator is shown because a relevant chief complaint or symptoms was entered (e.g., 'weakness').") # Updated example text
 
     score = 0
     missing_items = []
@@ -345,8 +352,8 @@ if use_nihss:
         "Horizontal gaze palsy (Normal to Forced gaze palsy)": ["0", "1", "2"],
         "Visual (No to Complete hemianopia)": ["0", "1", "2", "3"],
         "Facial palsy (No to Complete paralysis)": ["0", "1", "2", "3"],
-        "Motor arm (No drift, Drift no Hit, Drift & Hit, Some against gravity, No against gravity, No movement)": ["0", "1", "2", "3", "4"], # Changed wording to match earlier versions, assuming consistency is preferred
-        "Motor leg (Same as arm)": ["0", "1", "2", "3", "4"], # Changed wording to match earlier versions, assuming consistency is preferred
+        "Motor arm (No drift, Drift no Hit, Drift & Hit, Some against gravity, No against gravity, No movement)": ["0", "1", "2", "3", "4"], # Your original wording
+        "Motor leg (Same as arm)": ["0", "1", "2", "3", "4"], # Your original wording
         "Limb ataxia (No to Both limbs ataxia)": ["0", "1", "2"],
         "Sensory (Normal, Can sense Touch, No sense)": ["0", "1", "2"],
         "Language (Normal to Global aphasia)": ["0", "1", "2", "3"],
@@ -356,7 +363,8 @@ if use_nihss:
 
     entered_scores = {}
     for item, options in nihss_data.items():
-        val = st.selectbox(f"{item}", options, key=f"nihss_{item.replace(' ', '_').replace('–', '').replace('&', '').replace('(','').replace(')','').replace(',','')}") # Made key more robust
+        # Using a more robust key generation for NIHSS selectboxes
+        val = st.selectbox(f"{item}", options, key=f"nihss_{item.replace(' ', '_').replace('–', '').replace('&', '').replace('(','').replace(')','').replace(',','').lower()}")
         if val != "":
             entered_scores[item] = int(val)
             score += int(val)
@@ -366,4 +374,5 @@ if use_nihss:
     st.subheader(f"Total NIHSS Score: **{score}**")
     if missing_items:
         st.warning("Missing data for: " + ", ".join(missing_items))
-"# poorly written by thINGamabob" 
+
+"# poorly written by thINGamabob"
