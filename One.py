@@ -235,14 +235,10 @@ if "Ataxia (Truncal)" in symptoms:
 
 # Rule 6: Dysarthria (Multiple locations)
 if "Dysarthria" in symptoms:
-    add_lesion("Pons (Brainstem)") # Standardized
-    add_lesion("Cerebellum")
+    add_lesion("Cerebellum, Pons (Brainstem)") # Standardized
     add_lesion("Internal Capsule") # Standardized
-    add_lesion("Motor Cortex (Bilateral lesions)") # Standardized
     affected_vessels.add("Basilar Artery branches (pontine arteries)")
     affected_vessels.add("Lenticulostriate arteries")
-    affected_vessels.add("ACA/MCA/PCA branches (non-specific)")
-    ambiguity_notes.append("Dysarthria is a non-localizing sign alone, but in combination with other deficits, it helps pinpoint the lesion.")
     suggest_imaging = True if use_nihss else suggest_imaging
 
 # Rule 7: Seizure (Cortical/Generalized)
