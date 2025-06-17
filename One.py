@@ -247,25 +247,26 @@ else:
 if use_nihss:
     st.header("NIHSS Score Calculator")
 
-    st.markdown("NIHSS calculator is shown because a relevant chief complaint or symptom was entered (e.g., 'stroke', 'TIA').")
+    st.markdown("NIHSS calculator is shown because a relevant chief complaint or symptom was entered (e.g., 'stroke', 'TIA'), 
+    Scale of Motor: {No drift, Drift but doesn't hit bed, Drift and Hit, Against gravity, No effort agains gravity, No movements}")
 
     score = 0
     missing_items = []
 
     nihss_data = {
-        "1a – LOC": ["0", "1", "2", "3"],
-        "1b – LOC Questions": ["0", "1", "2"],
-        "1c – LOC Commands": ["0", "1", "2"],
-        "2 – Gaze": ["0", "1", "2"],
-        "3 – Visual": ["0", "1", "2", "3"],
-        "4 – Facial palsy": ["0", "1", "2", "3"],
-        "5 – Motor arm (worst)": ["0", "1", "2", "3", "4"],
-        "6 – Motor leg (worst)": ["0", "1", "2", "3", "4"],
-        "7 – Limb ataxia": ["0", "1", "2"],
-        "8 – Sensory": ["0", "1", "2"],
-        "9 – Language": ["0", "1", "2", "3"],
-        "10 – Dysarthria": ["0", "1", "2"],
-        "11 – Extinction/Inattention": ["0", "1", "2"]
+        "LOC (Alert to Unresponsive)": ["0", "1", "2", "3"],
+        "Month & Age": ["0", "1", "2"],
+        "Blink eyes & Squeeze hands": ["0", "1", "2"],
+        "Horizontal gaze palsy": ["0", "1", "2"],
+        "Visual (No to Complete hemianopia)": ["0", "1", "2", "3"],
+        "Facial palsy (No to Complete paralysis)": ["0", "1", "2", "3"],
+        "Motor arm": ["0", "1", "2", "3", "4"],
+        "Motor leg": ["0", "1", "2", "3", "4"],
+        "Limb ataxia": ["0", "1", "2"],
+        "Sensory": ["0", "1", "2"],
+        "Language": ["0", "1", "2", "3"],
+        "Dysarthria": ["0", "1", "2"],
+        "Extinction/Inattention": ["0", "1", "2"]
     }
 
     entered_scores = {}
@@ -280,4 +281,4 @@ if use_nihss:
     st.subheader(f"Total NIHSS Score: **{score}**")
     if missing_items:
         st.warning("Missing data for: " + ", ".join(missing_items))
-"# One" 
+"# poorly written by thINGamabob" 
