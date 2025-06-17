@@ -5,7 +5,7 @@ st.set_page_config(page_title="One", layout="centered", initial_sidebar_state="e
 st.title("Weird Localizer & N Calculator")
 
 st.header("Presentation")
-chief_complaint = st.text_input("e.g., 'weakness', 'dysarthria', 'numbness'", "").strip()
+chief_complaint = st.text_input("e.g. weakness, dysarthria, numbness").strip()
 
 st.header("Symptoms")
 
