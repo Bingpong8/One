@@ -1,0 +1,283 @@
+import streamlit as st
+
+st.set_page_config(page_title="One", layout="centered", initial_sidebar_state="expanded")
+
+st.title("Neurological Lesion Localizer & NIHSS Calculator")
+
+# --- Chief Complaint Text Input ---
+st.header("Chief Complaint")
+chief_complaint = st.text_input("Chief Complaint (e.g., 'weakness', 'dysarthria', 'numbness')", "").strip()
+
+# Symptom checklist
+st.header("Symptoms")
+# Expanded motor symptom options for more precise localization
+symptoms = st.multiselect("Choose relevant symptoms:", [
+    "Right hemiparesis (Upper & Lower equally)",   # Subcortical
+    "Right hemiparesis (Arm > Leg)",              # Cortical (e.g., MCA territory)
+    "Right hemiparesis (Leg > Arm)",              # Cortical (e.g., ACA territory)
+    "Left hemiparesis (Upper & Lower equally)",   # Subcortical
+    "Left hemiparesis (Arm > Leg)",               # Cortical (e.g., MCA territory)
+    "Left hemiparesis (Leg > Arm)",               # Cortical (e.g., ACA territory)
+    "Aphasia",
+    "Neglect",
+    "Facial palsy (Upper & Lower face equally affected)", # LMN or brainstem (e.g., CN VII nucleus)
+    "Facial palsy (Lower face only affected)",           # UMN (cortical or corticobulbar tract)
+    "Vertigo",
+    "Dysarthria",
+    "Partial seizure",       
+    "Generalized seizure",   
+    "Emotional disturbances", 
+    "Vision loss (Homonymous Hemianopia)", # More specific vision loss
+    "Vision loss (Unilateral, optic nerve related)",
+    "Ataxia (Limb)",
+    "Ataxia (Truncal)",
+    "Sensory loss (Hemibody, all modalities)",
+    "Sensory loss (Dissociated - e.g., pain/temp affected, light touch spared)", # Brainstem/spinal cord
+    "Tongue deviation",
+    "Horner’s syndrome",
+    "Gaze palsy (Conjugate, toward lesion)",
+    "Gaze palsy (Conjugate, away from lesion)",
+    "Gaze palsy (Internuclear Ophthalmoplegia - INO)" # Specific brainstem lesion
+])
+
+# Determine if NIHSS should be used
+nihss_keywords = ["stroke", "tia", "cva", "ischemia", "hemorrhage", "infarct", "weakness", "numbness", "mute", "stuporous", "palsy", "dysarthria", "hemiparesis", "aoc", "alteration"]
+
+use_nihss_from_symptoms = any(any(keyword in s.lower() for keyword in nihss_keywords) for s in symptoms)
+use_nihss_from_chief_complaint = False
+if chief_complaint:
+    for keyword in nihss_keywords:
+        if keyword in chief_complaint.lower():
+            use_nihss_from_chief_complaint = True
+            break
+use_nihss = use_nihss_from_symptoms or use_nihss_from_chief_complaint
+
+
+# --- Advanced Lesion Localization Logic ---
+st.header("Likely Lesion Locations")
+
+lesion_locations = set() # Use a set to store unique locations
+ambiguity_notes = [] # To store notes about ambiguous data
+suggest_imaging = False # Flag to suggest imaging
+
+# Rule 1: Hemiparesis Patterns
+# Right side weakness -> Left Hemisphere
+if "Right hemiparesis (Upper & Lower equally)" in symptoms:
+    lesion_locations.add("Left internal capsule (Subcortical)")
+    lesion_locations.add("Left Thalamus (if sensory also affected)")
+    suggest_imaging = True
+elif "Right hemiparesis (Arm > Leg)" in symptoms:
+    lesion_locations.add("Left motor cortex (Middle Cerebral Artery territory)")
+    suggest_imaging = True
+elif "Right hemiparesis (Leg > Arm)" in symptoms:
+    lesion_locations.add("Left motor cortex (Anterior Cerebral Artery territory)")
+    suggest_imaging = True
+
+# Left side weakness -> Right Hemisphere
+if "Left hemiparesis (Upper & Lower equally)" in symptoms:
+    lesion_locations.add("Right internal capsule (Subcortical)")
+    lesion_locations.add("Right Thalamus (if sensory also affected)")
+    suggest_imaging = True
+elif "Left hemiparesis (Arm > Leg)" in symptoms:
+    lesion_locations.add("Right motor cortex (Middle Cerebral Artery territory)")
+    suggest_imaging = True
+elif "Left hemiparesis (Leg > Arm)" in symptoms:
+    lesion_locations.add("Right motor cortex (Anterior Cerebral Artery territory)")
+    suggest_imaging = True
+
+# Rule 2: Aphasia
+if "Aphasia" in symptoms:
+    lesion_locations.add("Left frontal lobe (Broca's area) - Expressive Aphasia")
+    lesion_locations.add("Left temporal lobe (Wernicke's area) - Receptive Aphasia")
+    lesion_locations.add("Left parietal lobe (Conduction Aphasia)")
+    suggest_imaging = True # Aphasia often warrants imaging
+
+# Rule 3: Neglect
+if "Neglect" in symptoms:
+    lesion_locations.add("Right parietal lobe")
+    lesion_locations.add("Right frontal lobe")
+    lesion_locations.add("Right thalamus")
+    lesion_locations.add("Right subcortical white matter")
+    suggest_imaging = True
+
+# Rule 4: Facial Palsy
+# Combine check for general hemiparesis for side-specific UMN facial palsy
+any_right_hemiparesis = any("Right hemiparesis" in s for s in symptoms)
+any_left_hemiparesis = any("Left hemiparesis" in s for s in symptoms)
+
+if "Facial palsy (Upper & Lower face equally affected)" in symptoms:
+    lesion_locations.add("Ipsilateral Pons (Facial nerve nucleus or exiting fascicles)")
+    lesion_locations.add("Ipsilateral Facial Nerve (Peripheral palsy)")
+    ambiguity_notes.append("For upper & lower face palsy, consider Bell's palsy (peripheral) vs. brainstem stroke/lesion.")
+    suggest_imaging = True if use_nihss else suggest_imaging # If stroke suspected, image
+
+elif "Facial palsy (Lower face only affected)" in symptoms:
+    if any_right_hemiparesis:
+        lesion_locations.add("Left precentral gyrus (Lower face motor cortex)")
+        lesion_locations.add("Left internal capsule (Corticobulbar tract)")
+    elif any_left_hemiparesis:
+        lesion_locations.add("Right precentral gyrus (Lower face motor cortex)")
+        lesion_locations.add("Right internal capsule (Corticobulbar tract)")
+    else: # If UMN facial palsy without clear hemiparesis
+        lesion_locations.add("Contralateral motor cortex or corticobulbar tract")
+        ambiguity_notes.append("Lower face palsy without hemiparesis might suggest a focal cortical lesion or lacunar stroke.")
+    suggest_imaging = True
+
+# Rule 5: Vertigo and Ataxia (Brainstem/Cerebellum)
+if "Vertigo" in symptoms:
+    lesion_locations.add("Cerebellum (Vestibulocerebellum)")
+    lesion_locations.add("Brainstem (Vestibular nuclei - e.g., lateral medulla for Wallenberg's)")
+    ambiguity_notes.append("Vertigo can be peripheral (inner ear) or central (brainstem/cerebellum). Consider other brainstem signs for central origin.")
+    suggest_imaging = True if "Brainstem" in str(lesion_locations) or use_nihss else suggest_imaging
+if "Ataxia (Limb)" in symptoms:
+    lesion_locations.add("Ipsilateral Cerebellar hemisphere")
+    lesion_locations.add("Cerebellar peduncles")
+    lesion_locations.add("Brainstem (Pons/Medulla - input/output to cerebellum)")
+    suggest_imaging = True
+if "Ataxia (Truncal)" in symptoms:
+    lesion_locations.add("Cerebellar vermis")
+    ambiguity_notes.append("Truncal ataxia is highly suggestive of cerebellar vermis involvement, often associated with gait instability.")
+    suggest_imaging = True
+
+# Rule 6: Dysarthria (Multiple locations)
+if "Dysarthria" in symptoms:
+    lesion_locations.add("Pons (Corticobulbar tracts, lower cranial nerves)")
+    lesion_locations.add("Cerebellum")
+    lesion_locations.add("Internal capsule")
+    lesion_locations.add("Motor cortex (Bilateral lesions)")
+    ambiguity_notes.append("Dysarthria is a non-localizing sign alone, but in combination with other deficits, it helps pinpoint the lesion.")
+    suggest_imaging = True if use_nihss else suggest_imaging
+
+# Rule 7: Seizure (Cortical/Generalized)
+if "Partial seizure" in symptoms:
+    lesion_locations.add("Focal cortical lesion (e.g., Frontal, Temporal, Parietal, Occipital lobe)")
+    ambiguity_notes.append("Partial seizures require localization of the seizure focus. Imaging is crucial.")
+    suggest_imaging = True
+if "Generalized seizure" in symptoms:
+    lesion_locations.add("Diffuse cortical dysfunction")
+    ambiguity_notes.append("Generalized seizures often don't have a single focal lesion on imaging but can be associated with metabolic, toxic, or genetic causes. Imaging may still be warranted to rule out structural causes.")
+    suggest_imaging = True # Still good practice to image
+
+# Rule 8: Emotional Disturbances (Non-specific, but can be localized)
+if "Emotional disturbances" in symptoms:
+    lesion_locations.add("Frontal lobe (Orbitofrontal, medial prefrontal cortex)")
+    lesion_locations.add("Temporal lobe (Amygdala, hippocampus)")
+    lesion_locations.add("Limbic system structures")
+    ambiguity_notes.append("Emotional disturbances are highly non-specific and can result from various neurological or psychiatric conditions. Lesion localization is challenging without other signs.")
+    suggest_imaging = True if use_nihss else suggest_imaging 
+
+# Rule 9: Vision Loss
+if "Vision loss (Homonymous Hemianopia)" in symptoms:
+    st.info("For Homonymous Hemianopia, consider the contralateral lesion. E.g., Left HH -> Right Occipital/Optic Radiation.")
+    lesion_locations.add("Contralateral Occipital lobe (Visual cortex)")
+    lesion_locations.add("Contralateral Optic radiation (Parietal or Temporal lobe)")
+    lesion_locations.add("Contralateral Thalamus (Lateral Geniculate Nucleus)")
+    suggest_imaging = True
+elif "Vision loss (Unilateral, optic nerve related)" in symptoms:
+    lesion_locations.add("Ipsilateral Optic nerve")
+    lesion_locations.add("Optic Chiasm")
+    ambiguity_notes.append("Unilateral vision loss can also be ocular in origin. Neurological causes usually involve optic nerve or chiasm.")
+    suggest_imaging = True
+
+# Rule 10: Sensory Loss
+if "Sensory loss (Hemibody, all modalities)" in symptoms:
+    lesion_locations.add("Contralateral Parietal lobe (Somatosensory cortex)")
+    lesion_locations.add("Contralateral Thalamus (VPL/VPM nucleus)")
+    lesion_locations.add("Contralateral Internal capsule (Sensory tracts)")
+    suggest_imaging = True
+elif "Sensory loss (Dissociated - e.g., pain/temp affected, light touch spared)" in symptoms:
+    lesion_locations.add("Brainstem (Lateral Medulla for Wallenberg's syndrome - ipsilateral face/contralateral body pain/temp)")
+    lesion_locations.add("Spinal Cord (Syringomyelia, Brown-Séquard - level dependent)")
+    ambiguity_notes.append("Dissociated sensory loss strongly suggests a brainstem or spinal cord lesion.")
+    suggest_imaging = True
+
+# Rule 11: Tongue Deviation
+if "Tongue deviation" in symptoms:
+    lesion_locations.add("Ipsilateral Medulla (Hypoglossal nucleus - CN XII)")
+    lesion_locations.add("Ipsilateral Hypoglossal Nerve (Peripheral)")
+    suggest_imaging = True if use_nihss else suggest_imaging
+
+# Rule 12: Horner’s syndrome
+if "Horner’s syndrome" in symptoms:
+    lesion_locations.add("Ipsilateral Lateral Medulla (Wallenberg's syndrome)")
+    lesion_locations.add("Ipsilateral Pons")
+    lesion_locations.add("Hypothalamospinal tract (anywhere from hypothalamus down to T1)")
+    lesion_locations.add("Carotid Artery dissection (sympathetic chain involvement)")
+    ambiguity_notes.append("Horner's syndrome requires careful evaluation for the level of sympathetic chain involvement (central, preganglionic, postganglionic).")
+    suggest_imaging = True
+
+# Rule 13: Gaze Palsy
+if "Gaze palsy (Conjugate, toward lesion)" in symptoms:
+    lesion_locations.add("Ipsilateral Frontal eye field")
+    lesion_locations.add("Ipsilateral Pontine gaze center (PPRF)")
+    suggest_imaging = True
+elif "Gaze palsy (Conjugate, away from lesion)" in symptoms:
+    lesion_locations.add("Contralateral Frontal eye field (Irritative lesion)")
+    suggest_locations.add("Basal Ganglia/Thalamus (less common for conjugate deviation)") # Added this for completeness
+    suggest_imaging = True
+elif "Gaze palsy (Internuclear Ophthalmoplegia - INO)" in symptoms:
+    lesion_locations.add("Medial Longitudinal Fasciculus (MLF) in Brainstem (usually Pons)")
+    suggest_imaging = True
+
+# Display Results
+if lesion_locations:
+    st.subheader("Likely Lesion Locations:")
+    for loc in sorted(list(lesion_locations)):
+        st.markdown(f"- {loc}")
+
+    if ambiguity_notes:
+        st.subheader("Considerations/Ambiguities:")
+        for note in sorted(list(set(ambiguity_notes))): # Use a set to display unique notes and sort them
+            st.info(f"- {note}")
+
+    if suggest_imaging or use_nihss: # Always suggest imaging if stroke keywords present
+        st.subheader("Next Steps:")
+        st.success("Given the symptoms, **imaging (CT or MRI scan of the brain)** is highly recommended to confirm the lesion location and etiology.")
+        if "Spinal Cord" in str(lesion_locations):
+            st.success("If spinal cord involvement is suspected (e.g., dissociated sensory loss), **MRI of the spine** may also be indicated.")
+        st.info("Consult with a neurologist for definitive diagnosis and management.")
+
+else:
+    st.warning("No specific lesion matches found. Please refine symptom selection or enter a chief complaint.")
+    if chief_complaint:
+        st.info("If symptoms are vague or non-localizing, consult a healthcare professional for further evaluation.")
+
+
+# NIHSS Calculator if stroke/TIA mentioned
+if use_nihss:
+    st.header("NIHSS Score Calculator")
+
+    st.markdown("NIHSS calculator is shown because a relevant chief complaint or symptom was entered (e.g., 'stroke', 'TIA').")
+
+    score = 0
+    missing_items = []
+
+    nihss_data = {
+        "1a – LOC": ["0", "1", "2", "3"],
+        "1b – LOC Questions": ["0", "1", "2"],
+        "1c – LOC Commands": ["0", "1", "2"],
+        "2 – Gaze": ["0", "1", "2"],
+        "3 – Visual": ["0", "1", "2", "3"],
+        "4 – Facial palsy": ["0", "1", "2", "3"],
+        "5 – Motor arm (worst)": ["0", "1", "2", "3", "4"],
+        "6 – Motor leg (worst)": ["0", "1", "2", "3", "4"],
+        "7 – Limb ataxia": ["0", "1", "2"],
+        "8 – Sensory": ["0", "1", "2"],
+        "9 – Language": ["0", "1", "2", "3"],
+        "10 – Dysarthria": ["0", "1", "2"],
+        "11 – Extinction/Inattention": ["0", "1", "2"]
+    }
+
+    entered_scores = {}
+    for item, options in nihss_data.items():
+        val = st.selectbox(f"{item}", options, key=f"nihss_{item.replace(' ', '_').replace('–', '')}")
+        if val != "":
+            entered_scores[item] = int(val)
+            score += int(val)
+        else:
+            missing_items.append(item)
+
+    st.subheader(f"Total NIHSS Score: **{score}**")
+    if missing_items:
+        st.warning("Missing data for: " + ", ".join(missing_items))
+"# One" 
