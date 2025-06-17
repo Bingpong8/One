@@ -158,11 +158,11 @@ if "Right hemiparesis (Upper & Lower equally)" in symptoms:
     affected_vessels.add("Thalamoperforating arteries (PCA deep branches)")
     suggest_imaging = True
 elif "Right hemiparesis (Upper> Lower)" in symptoms:
-    add_lesion("Left motor cortex (Middle Cerebral Artery territory)")
+    add_lesion("Left motor cortex")
     affected_vessels.add("Left Middle Cerebral Artery (MCA) - Superior Division")
     suggest_imaging = True
 elif "Right hemiparesis (Lower> Upper)" in symptoms:
-    add_lesion("Left motor cortex (Anterior Cerebral Artery territory)")
+    add_lesion("Left motor cortex")
     affected_vessels.add("Left Anterior Cerebral Artery (ACA)")
     suggest_imaging = True
 
@@ -173,11 +173,11 @@ if "Left hemiparesis (Upper & Lower equally)" in symptoms:
     affected_vessels.add("Thalamoperforating arteries (PCA deep branches)")
     suggest_imaging = True
 elif "Left hemiparesis (Upper> Lower)" in symptoms:
-    add_lesion("Right motor cortex (Middle Cerebral Artery territory)")
+    add_lesion("Right motor cortex")
     affected_vessels.add("Right Middle Cerebral Artery (MCA) - Superior Division")
     suggest_imaging = True
 elif "Left hemiparesis (Lower> Upper)" in symptoms:
-    add_lesion("Right motor cortex (Anterior Cerebral Artery territory)")
+    add_lesion("Right motor cortex")
     affected_vessels.add("Right Anterior Cerebral Artery (ACA)")
     suggest_imaging = True
 
