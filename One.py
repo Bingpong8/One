@@ -69,8 +69,7 @@ def add_lesion(location_str):
 
     # Comprehensive standardization and de-duplication logic
     # Prioritize specific terms, but ensure general terms are added if no specific ones exist for a category.
-    # This requires checking existing set members.
-
+  
     # 1. Handle specific brainstem parts vs. general brainstem
     if "lateral medulla" in loc_lower or "pons" in loc_lower or "medulla" in loc_lower:
         specific_brainstem_term = ""
@@ -744,6 +743,5 @@ if use_nihss:
     if missing_items:
         st.warning("Missing data for: " + ", ".join(missing_items))
 
-# At the end of your app script
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("<p style='font-size:10px; color:gray;'>poorly written by thINGamabob, good patriotic techmarine and their evil twin</p>", unsafe_allow_html=True)
