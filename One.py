@@ -4,11 +4,9 @@ st.set_page_config(page_title="One", layout="centered", initial_sidebar_state="e
 
 st.title("Weird Localizer & N Calculator")
 
-# --- Chief Complaint Text Input ---
 st.header("Presentation")
 chief_complaint = st.text_input("e.g. weakness, dysarthria, numbness").strip()
 
-# Symptom checklist
 st.header("Symptoms")
 
 symptoms = st.multiselect("Choose symptom(s):", [
@@ -37,11 +35,15 @@ symptoms = st.multiselect("Choose symptom(s):", [
     "Horner’s syndrome",
     "Gaze palsy (Conjugate, toward lesion)",
     "Gaze palsy (Conjugate, away from lesion)",
-    "Gaze palsy (Internuclear Ophthalmoplegia - INO)" # Specific brainstem lesion
+    "Gaze palsy (Internuclear Ophthalmoplegia - INO)"
+    "Chorea",
+    "Hemiballism",
+    "Nystagmus",
+    "Hiccup (Persistent/Intractable)"
 ])
 
 # Determine if NIHSS should be used
-nihss_keywords = ["stroke", "tia", "cva", "ischemia", "hemorrhage", "infarct", "weakness", "numbness", "mute", "stuporous", "palsy", "dysarthria", "hemiparesis", "aoc", "alteration", "weak", "numb", "passing out", "seizure", "aphasia", "neglect", "vertigo", "ataxia", "sensory loss", "gaze palsy"]
+nihss_keywords = ["stroke", "tia", "cva", "ischemia", "hemorrhage", "infarct", "weakness", "numbness", "mute", "stuporous", "palsy", "dysarthria", "hemiparesis", "aoc", "alteration", "weak", "numb", "passing out", "seizure", "aphasia", "neglect", "vertigo", "ataxia", "sensory loss", "gaze palsy", "chorea", "hemiballism", "nystagmus", "hiccup"]
 
 use_nihss_from_symptoms = any(any(keyword in s.lower() for keyword in nihss_keywords) for s in symptoms)
 use_nihss_from_chief_complaint = False
@@ -448,7 +450,6 @@ if "Dysarthria" in symptoms:
     add_lesion("Motor Cortex (Bilateral lesions)")
     add_vessel_to_affected("Basilar Artery branches (pontine arteries)") # Standardized
     add_vessel_to_affected("Lenticulostriate arteries") # Standardized
-    # Removed generic "ACA/MCA/PCA branches (non-specific)" as it's too broad and likely covered by more specific rules
     suggest_imaging = True if use_nihss else suggest_imaging
 
 # Rule 7: Seizure (Cortical/Generalized)
@@ -550,6 +551,31 @@ elif "Gaze palsy (Internuclear Ophthalmoplegia - INO)" in symptoms:
     ambiguity_notes.add("INO is highly suggestive of a brainstem lesion, often seen in multiple sclerosis or stroke.")
     suggest_imaging = True
 
+# Rule 14: Chorea
+if "Chorea" in symptoms:
+    add_lesion ("Contralateral Striatum", "Contralateral Subthalamic Nucleus", "Contralateral Thalamus", "Basal Ganglia")
+    add_vessel_to_affected("Lenticulostriate arteries", "Posterior Cerebral Artery (PCA) perforators")
+    suggest_imaging = True
+
+# Rule 15: Hemiballism
+if "Hemiballism" in symptoms:
+    add_lesion ("Contralateral Subthalamic Nucleus")
+    add_vessel_to_affected("Lenticulostriate arteries", "Thalamoperforating arteries", "Anterior Choroidal Artery")
+    suggest_imaging = True
+
+# Rule 16: Hiccup
+if "Hiccup (Persistent/Intractable)" in symptoms:
+    add_lesion ("Medulla (Nucleus Tractus Solitarius)", "Phrenic Nerve Nucleus (C3-C5 Spinal Cord)", "Hypothalamus", "Brainstem")
+    add_vessel_to_affected("Vertebral Artery branches", "Posterior Inferior Cerebellar Artery (PICA)")
+    ambiguity_notes.add("Persistent or intractable hiccups can be an important sign of brainstem, spinal cord, or other CNS lesions. Consider metabolic, GI, or autoimmune causes as well.")
+    suggest_imaging = True
+
+# Rule 17: Nystagmus
+if "Nystagmus" in symptoms:
+    add_lesion ("Cerebellum", "Brainstem (Vestibular Nuclei)", "Medial Longitudinal Fasciculus (MLF)", "Pontine Gaze Center (PPRF)", "Vestibular Nerve (Peripheral)")
+    add_vessel_to_affected("PICA", "AICA", "Superior Cerebellar Artery", "Basilar Artery branches (pontine arteries)", "Vertebral Artery")
+    ambiguity_notes.add("Nystagmus can be central (brainstem/cerebellar) or peripheral. Central Nystagmus is often vertical, purely torsional, or non-fatigable.")
+    suggest_imaging = True
 
 # --- Combine for Vascular Territory Analysis (Processing, not direct display) ---
 # Special combined rules for common stroke syndromes
@@ -569,12 +595,12 @@ elif "Vision loss (Homonymous Hemianopia)" in symptoms and "Aphasia" in symptoms
     suggest_imaging = True
 elif all(s in symptoms for s in ["Vertigo", "Dysarthria", "Facial palsy (Upper & Lower face equally affected)", "Sensory loss (Dissociated - e.g. pain/temp affected, light touch spared)"]):
     vascular_analysis.add("Vertebrobasilar System - Posterior Inferior Cerebellar Artery (PICA) - for Lateral Medullary (Wallenberg's) Syndrome")
-    add_lesion("Lateral Medulla (Brainstem)") # Add with standardization
+    add_lesion("Lateral Medulla (Brainstem)")
     suggest_imaging = True
 elif all(s in symptoms for s in ["Right hemiparesis (Upper & Lower equally)", "Facial palsy (Lower face only affected)", "Sensory loss (Hemibody, all modalities)"]):
     vascular_analysis.add("Left Lenticulostriate arteries (deep branches of MCA) - for Lacunar Syndrome (Pure Motor or Sensorimotor Stroke)")
-    add_lesion("Left Internal Capsule") # Add with standardization
-    add_lesion("Left Basal Ganglia") # Add with standardization
+    add_lesion("Left Internal Capsule")
+    add_lesion("Left Basal Ganglia")
     suggest_imaging = True
 elif all(s in symptoms for s in ["Left hemiparesis (Upper & Lower equally)", "Facial palsy (Lower face only affected)", "Sensory loss (Hemibody, all modalities)"]):
     vascular_analysis.add("Right Lenticulostriate arteries (deep branches of MCA) - for Lacunar Syndrome (Pure Motor or Sensorimotor Stroke)")
@@ -632,7 +658,6 @@ if lesion_locations or affected_vessels:
                 # This needs careful definition of "implies"
                 # For example, if "MCA Superior Division" is in syndromes, then "MCA branches" is redundant.
                 # This is harder and can lead to over-filtering.
-                # Let's keep it simple for now: if a specific IS in syndrome, remove general from additional.
                 # Example: If "Middle Cerebral Artery (MCA) - Superior Division" is in syndrome, and
                 # "Middle Cerebral Artery (MCA) branches" is in additional, remove "MCA branches".
                 if (syndrome_core == "Middle Cerebral Artery (MCA) - Superior Division" and individual_vessel_standardized == "Middle Cerebral Artery (MCA) branches") or \
