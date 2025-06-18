@@ -340,7 +340,7 @@ def add_vessel_to_affected(vessel_name_raw):
 # Rule 1: Hemiparesis Patterns
 # Right side weakness -> Left Hemisphere
 if "Right hemiparesis (Upper & Lower equally)" in symptoms:
-    add_lesion("Left internal capsule") # Use general term, helper handles specifics
+    add_lesion("Left internal capsule")
     add_lesion("Left Thalamus")
     add_vessel_to_affected("Lenticulostriate arteries") # Standardized name
     add_vessel_to_affected("Thalamoperforating arteries") # Standardized name
@@ -553,20 +553,27 @@ elif "Gaze palsy (Internuclear Ophthalmoplegia - INO)" in symptoms:
 
 # Rule 14: Chorea
 if "Chorea" in symptoms:
-    add_lesion("Contralateral Striatum", "Contralateral Subthalamic Nucleus", "Contralateral Thalamus", "Basal Ganglia")
-    add_vessel_to_affected("Lenticulostriate arteries", "Posterior Cerebral Artery (PCA) perforators")
+    add_lesion("Contralateral Striatum/Subthalamic Nucleus/Thalamus/Basal Ganglia")
+    add_vessel_to_affected("Lenticulostriate arteries")
+    add_vessel_to_affected("Posterior Cerebral Artery (PCA) perforators")
     suggest_imaging = True
 
 # Rule 15: Hemiballism
 if "Hemiballism" in symptoms:
     add_lesion("Contralateral Subthalamic Nucleus")
-    add_vessel_to_affected("Lenticulostriate arteries", "Thalamoperforating arteries", "Anterior Choroidal Artery")
+    add_vessel_to_affected("Lenticulostriate arteries")
+    add_vessel_to_affected("Thalamoperforating arteries")
+    add_vessel_to_affected("Anterior Choroidal Artery")
     suggest_imaging = True
 
 # Rule 16: Hiccup
 if "Hiccup (Persistent/Intractable)" in symptoms:
-    add_lesion("Medulla (Nucleus Tractus Solitarius)", "Phrenic Nerve Nucleus (C3-C5 Spinal Cord)", "Hypothalamus", "Brainstem")
-    add_vessel_to_affected("Vertebral Artery branches", "Posterior Inferior Cerebellar Artery (PICA)")
+    add_lesion("Medulla (Nucleus Tractus Solitarius)")
+    add_lesion("Phrenic Nerve Nucleus (C3-C5 Spinal Cord)")
+    add_lesion("Hypothalamus")
+    add_lesion("Brainstem")
+    add_vessel_to_affected("Vertebral Artery branches")
+    add_vessel_to_affected("Posterior Inferior Cerebellar Artery (PICA)")
     ambiguity_notes.add("Persistent or intractable hiccups can be an important sign of brainstem, spinal cord, or other CNS lesions. Consider metabolic, GI, or autoimmune causes as well.")
     suggest_imaging = True
 
