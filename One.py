@@ -43,7 +43,7 @@ symptoms = st.multiselect("Choose symptom(s):", [
 ])
 
 # Determine if NIHSS should be used
-nihss_keywords = ["stroke", "tia", "cva", "ischemia", "hemorrhage", "infarct", "weakness", "numbness", "mute", "stuporous", "palsy", "dysarthria", "hemiparesis", "aoc", "alteration", "weak", "numb", "passing out", "seizure", "aphasia", "neglect", "vertigo", "ataxia", "sensory loss", "gaze palsy", "chorea", "hemiballism", "nystagmus", "hiccup"]
+nihss_keywords = ["weakness", "numbness", "mute", "stuporous", "palsy", "dysarthria", "hemiparesis", "aoc", "alteration", "weak", "numb", "passing out", "seizure", "aphasia", "neglect", "vertigo", "ataxia", "sensory loss", "gaze palsy", "chorea", "hemiballism", "nystagmus", "hiccup"]
 
 use_nihss_from_symptoms = any(any(keyword in s.lower() for keyword in nihss_keywords) for s in symptoms)
 use_nihss_from_chief_complaint = False
