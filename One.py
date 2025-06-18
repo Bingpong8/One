@@ -553,26 +553,26 @@ elif "Gaze palsy (Internuclear Ophthalmoplegia - INO)" in symptoms:
 
 # Rule 14: Chorea
 if "Chorea" in symptoms:
-    add_lesion ("Contralateral Striatum", "Contralateral Subthalamic Nucleus", "Contralateral Thalamus", "Basal Ganglia")
+    add_lesion("Contralateral Striatum", "Contralateral Subthalamic Nucleus", "Contralateral Thalamus", "Basal Ganglia")
     add_vessel_to_affected("Lenticulostriate arteries", "Posterior Cerebral Artery (PCA) perforators")
     suggest_imaging = True
 
 # Rule 15: Hemiballism
 if "Hemiballism" in symptoms:
-    add_lesion ("Contralateral Subthalamic Nucleus")
+    add_lesion("Contralateral Subthalamic Nucleus")
     add_vessel_to_affected("Lenticulostriate arteries", "Thalamoperforating arteries", "Anterior Choroidal Artery")
     suggest_imaging = True
 
 # Rule 16: Hiccup
 if "Hiccup (Persistent/Intractable)" in symptoms:
-    add_lesion ("Medulla (Nucleus Tractus Solitarius)", "Phrenic Nerve Nucleus (C3-C5 Spinal Cord)", "Hypothalamus", "Brainstem")
+    add_lesion("Medulla (Nucleus Tractus Solitarius)", "Phrenic Nerve Nucleus (C3-C5 Spinal Cord)", "Hypothalamus", "Brainstem")
     add_vessel_to_affected("Vertebral Artery branches", "Posterior Inferior Cerebellar Artery (PICA)")
     ambiguity_notes.add("Persistent or intractable hiccups can be an important sign of brainstem, spinal cord, or other CNS lesions. Consider metabolic, GI, or autoimmune causes as well.")
     suggest_imaging = True
 
 # Rule 17: Nystagmus
 if "Nystagmus" in symptoms:
-    add_lesion ("Cerebellum", "Brainstem (Vestibular Nuclei)", "Medial Longitudinal Fasciculus (MLF)", "Pontine Gaze Center (PPRF)", "Vestibular Nerve (Peripheral)")
+    add_lesion("Cerebellum", "Brainstem (Vestibular Nuclei)", "Medial Longitudinal Fasciculus (MLF)", "Pontine Gaze Center (PPRF)", "Vestibular Nerve (Peripheral)")
     add_vessel_to_affected("PICA", "AICA", "Superior Cerebellar Artery", "Basilar Artery branches (pontine arteries)", "Vertebral Artery")
     ambiguity_notes.add("Nystagmus can be central (brainstem/cerebellar) or peripheral. Central Nystagmus is often vertical, purely torsional, or non-fatigable.")
     suggest_imaging = True
