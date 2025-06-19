@@ -10,16 +10,16 @@ chief_complaint = st.text_input("e.g. weakness, dysarthria, numbness").strip()
 st.header("Symptoms")
 
 symptoms = st.multiselect("Choose symptom(s):", [
-    "Right hemiparesis (Upper & Lower equally)",    # Subcortical
-    "Right hemiparesis (Upper> Lower)",             # Cortical (e.g., MCA territory)
-    "Right hemiparesis (Lower> Upper)",             # Cortical (e.g., ACA territory)
-    "Left hemiparesis (Upper & Lower equally)",    # Subcortical
-    "Left hemiparesis (Upper> Lower)",              # Cortical (e.g., MCA territory)
-    "Left hemiparesis (Lower> Upper)",              # Cortical (e.g., ACA territory)
+    "Right hemiparesis (Upper & Lower equally)",    
+    "Right hemiparesis (Upper> Lower)",             
+    "Right hemiparesis (Lower> Upper)",             
+    "Left hemiparesis (Upper & Lower equally)",    
+    "Left hemiparesis (Upper> Lower)",              
+    "Left hemiparesis (Lower> Upper)",             
     "Aphasia",
     "Neglect",
-    "Facial palsy (Upper & Lower face equally affected)", # LMN or brainstem (e.g., CN VII nucleus)
-    "Facial palsy (Lower face only affected)",             # UMN (cortical or corticobulbar tract)
+    "Facial palsy (Upper & Lower face equally affected)", 
+    "Facial palsy (Lower face only affected)",             
     "Vertigo",
     "Dysarthria",
     "Partial seizure",
@@ -30,7 +30,7 @@ symptoms = st.multiselect("Choose symptom(s):", [
     "Ataxia (Limb)",
     "Ataxia (Truncal)",
     "Sensory loss (Hemibody, all modalities)",
-    "Sensory loss (Dissociated - e.g. pain/temp affected, light touch spared)", # Brainstem/spinal cord
+    "Sensory loss (Dissociated - e.g. pain/temp affected, light touch spared)", 
     "Tongue deviation",
     "Horner’s syndrome",
     "Gaze palsy (Conjugate, toward lesion)",
@@ -652,20 +652,10 @@ if lesion_locations or affected_vessels:
         for individual_vessel_standardized in affected_vessels:
             is_covered = False
             
-            # Check if the individual vessel (already standardized) is directly covered by a syndrome
             if individual_vessel_standardized in covered_by_syndromes_standardized:
                 is_covered = True
             
-            # Additional check: If an individual vessel is a general form of a specific syndrome
-            # e.g., "Middle Cerebral Artery (MCA) branches" in affected_vessels, but
-            # "Middle Cerebral Artery (MCA) - Superior Division" in vascular_analysis
             for syndrome_core in covered_by_syndromes_standardized:
-                # If the syndrome's core vessel implies the individual vessel (generalizing the syndrome)
-                # This needs careful definition of "implies"
-                # For example, if "MCA Superior Division" is in syndromes, then "MCA branches" is redundant.
-                # This is harder and can lead to over-filtering.
-                # Example: If "Middle Cerebral Artery (MCA) - Superior Division" is in syndrome, and
-                # "Middle Cerebral Artery (MCA) branches" is in additional, remove "MCA branches".
                 if (syndrome_core == "Middle Cerebral Artery (MCA) - Superior Division" and individual_vessel_standardized == "Middle Cerebral Artery (MCA) branches") or \
                    (syndrome_core == "Middle Cerebral Artery (MCA) - Inferior Division" and individual_vessel_standardized == "Middle Cerebral Artery (MCA) branches") or \
                    (syndrome_core == "Posterior Inferior Cerebellar Artery (PICA)" and individual_vessel_standardized == "Basilar Artery branches (pontine arteries)") or \
@@ -705,7 +695,6 @@ else:
         st.info("If symptoms are vague or non-localizing, consultation is recommended for further evaluation.")
 
 
-# NIHSS Calculator if stroke/TIA mentioned
 if use_nihss:
     st.header("NIHSS Score Calculator")
 
