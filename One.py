@@ -683,7 +683,7 @@ if lesion_locations or affected_vessels:
     else:
         # If no specific vascular syndrome matched, just display all identified affected_vessels
         if affected_vessels:
-            st.subheader("Potentially Affected Arterial Supply based on symptoms):")
+            st.subheader("Potentially Affected Arterial Supply based on symptoms:")
             for vessel in sorted(list(affected_vessels)):
                 st.markdown(f"- **{vessel}**")
         else:
