@@ -578,8 +578,16 @@ if "Hiccup (Persistent/Intractable)" in symptoms:
 
 # Rule 17: Nystagmus
 if "Nystagmus" in symptoms:
-    add_lesion("Cerebellum", "Brainstem (Vestibular Nuclei)", "Medial Longitudinal Fasciculus (MLF)", "Pontine Gaze Center (PPRF)", "Vestibular Nerve (Peripheral)")
-    add_vessel_to_affected("PICA", "AICA", "Superior Cerebellar Artery", "Basilar Artery branches (pontine arteries)", "Vertebral Artery")
+    add_lesion("Cerebellum") 
+    add_lesion("Brainstem (Vestibular Nuclei)")
+    add_lesion("Medial Longitudinal Fasciculus (MLF)") 
+    add_lesion("Pontine Gaze Center (PPRF)") 
+    add_lesion("Vestibular Nerve (Peripheral)")
+    add_vessel_to_affected("PICA")
+    add_vessel_to_affected("AICA")
+    add_vessel_to_affected("Superior Cerebellar Artery")
+    add_vessel_to_affected("Basilar Artery branches (pontine arteries)")
+    add_vessel_to_affected("Vertebral Artery")
     ambiguity_notes.add("Nystagmus can be central (brainstem/cerebellar) or peripheral. Central Nystagmus is often vertical, purely torsional, or non-fatigable.")
     suggest_imaging = True
 
